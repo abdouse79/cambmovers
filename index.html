@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vocabulary Trainer</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial;
+      }
+
+      /* LAYOUT */
+      .app {
+        display: flex;
+        height: 100vh;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 220px;
+        background: #2c3e50;
+        color: white;
+        padding: 15px;
+        height: 100vh;
+        box-sizing: border-box;
+        overflow-y: auto;
+      }
+
+      .sidebar h2 {
+        margin-top: 0;
+      }
+
+      .sidebar li {
+        list-style: none;
+        padding: 10px;
+        cursor: pointer;
+      }
+
+      .sidebar li:hover {
+        background: #34495e;
+      }
+
+      /* MAIN */
+      .main {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+      }
+
+      /* FLASHCARDS */
+      .flashcard-container {
+        perspective: 1000px;
+        margin: 30px auto;
+        width: 260px;
+        height: 320px;
+      }
+
+      .card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.6s;
+      }
+
+      .card.flip {
+        transform: rotateY(180deg);
+      }
+
+      .face {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 10px;
+        backface-visibility: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .back {
+        transform: rotateY(180deg);
+        justify-content: center;
+      }
+
+      .img {
+        width: 200px;
+        height: 200px;
+        object-fit: contain;
+      }
+
+      .label {
+        font-weight: bold;
+      }
+
+      /* OVERLAY */
+      .family-container {
+        position: relative;
+        display: inline-block;
+      }
+
+      .family-container img {
+        width: 800px;
+      }
+
+      .overlay-label {
+        position: absolute;
+        /*width: 75px;*/
+        padding: 8px 20px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.906);
+        color: transparent;
+        cursor: pointer;
+        border: 2px solid #ff4d6d;
+      }
+
+      
+      .overlay-label.revealed {
+        background: white;
+        color: black;
+      }
+
+      
+
+      /* CONTROLS */
+      .controls button {
+        padding: 8px 12px;
+        margin: 5px;
+      }
+
+      .nav button {
+        padding: 8px 12px;
+        margin: 5px;
+      }
+
+
+      #label-input {
+  height: 36px;
+  padding: 0 12px;
+  font-size: 14px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  outline: none;
+  width: 220px;
+}
+
+#label-input:focus {
+  border-color: #378ADD;
+  box-shadow: 0 0 0 3px rgba(55, 138, 221, 0.15);
+}
+
+#label-input::placeholder {
+  color: #aaa;
+}
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <h2>Categories</h2>
+        <ul id="categoryList"></ul>
+      </div>
+
+      <!-- MAIN -->
+      <div class="main">
+        <h1 id="title">Vocabulary Trainer</h1>
+
+        <div class="controls">
+          <button onclick="setMode('learn')">Learn</button>
+          <button onclick="setMode('test')">Test</button>
+        </div>
+
+        <div id="activityContainer"></div>
+      </div>
+    </div>
+
+    <script src="new_categories.js"></script>
+    <script>
+      // =======================
+      // CATEGORY CONFIG
+      // =======================
+      const categories = [
+        {
+          name: "Classroom",
+          data: {
+            type: "flashcard",
+            title: "Classroom Objects",
+            folder: "images/classroom",
+            items: [
+              { name: "atlas", file: "atlas.png" },
+              { name: "backpack", file: "backpack.png" },
+              { name: "whiteboard", file: "whiteboard.png" },
+              { name: "rubbber", file: "rubber.png" },
+              { name: "book", file: "book.png" },
+              { name: "compass", file: "compass.png" },
+              { name: "calculator", file: "calculator.png" },
+              { name: "colored pencils", file: "colored_pencil.png" },
+              { name: "desk", file: "desk.png" },
+              { name: "bin", file: "bin.png" },
+              { name: "book", file: "book.png" },
+              { name: "globe", file: "globe.png" },
+      { name: "map", file: "map.png" },
+      { name: "paper", file: "paper.png" },
+      { name: "glue", file: "glue.png" },
+              { name: "pen", file: "pen.png" },
+              { name: "pencil", file: "pencil.png" },
+              { name: "ruler", file: "ruler.png" },
+              { name: "scissors", file: "scissors.png" },
+              { name: "glue", file: "glue.png" },
+              { name: "highlighter", file: "highlighter.png" },
+              { name: "sharpener", file: "pencil_sharpener.png" },
+            ],
+          },
+        },
+        {
+          name: "Family",
+          data: {
+            type: "overlay",
+            title: "Family Members",
+            image: "images/family/family_members.png",
+            labels: [
+              { text: "grandmother", top: 22, left: 28 },
+              { text: "grandfather", top: 22, left: 55 },
+
+              { text: "aunt", top: 56, left: 3 },
+              { text: "aunt", top: 56, left: 23 },
+              { text: "uncle", top: 56, left: 42 },
+              { text: "father", top: 56, left: 61 },
+              { text: "mother", top: 56, left: 78 },
+
+              { text: "cousin", top: 93, left: 3 },
+              { text: "cousin", top: 93, left: 25 },
+              { text: "brother", top: 93, left: 43 },
+              { text: "me", top: 93, left: 61 },
+              { text: "sister", top: 93, left: 79 },
+            ],
+          },
+        },
+        {
+    name: "Physical Appearance",
+    data: {
+        type: "labeling",
+        title: "Physical Appearance",
+        images: [
+            {
+                src: "images/appearance/appearance1.png",
+                labels: [
+                    {text:"straight blond hair", top:7, left:13},
+                    {text:"blue eyes", top:15, left:25},
+                    {text:"big nose", top:25, left:25},
+                    {text:"moustache", top:35, left:25},
+                    {text:"tall", top:48, left:2},
+                    {text:"thin", top:87, left:18},
+
+                    {text:"short curly black hair", top:12, left:43},
+                    {text:"brown eyes", top:20, left:55},
+                    {text:"big mouth", top:38, left:55},
+                    {text:"fat", top:87, left:50},
+
+                    {text:"long wavy red hair", top:7, left:70},
+                    {text:"green eyes", top:15, left:80},
+                    {text:"long nose", top:28, left:85},
+                    {text:"thin face", top:37, left:87}
+                ]
+            },
+            {
+                src: "images/appearance/appearance2.png",
+                labels: [
+                    {text:"bald", top:10, left:13},
+                    {text:"big ears", top:25, left:26},
+                    {text:"beard", top:35, left:25},
+                    {text:"short", top:53, left:0},
+
+                    {text:"ponytail", top:7, left:39},
+                    {text:"fringe", top:15, left:53},
+                    {text:"dark eyes", top:23, left:55},
+                    {text:"pretty", top:90, left:45},
+
+                    {text:"glasses", top:8, left:75},
+                    {text:"freckles", top:17, left:85},
+                    {text:"good-looking", top:90, left:74}
+                ]
+            }
+        ]
+    }
+},
+        ...newCategories
+      ];
+
+      // =======================
+      // STATE
+      // =======================
+      let currentActivity = null;
+      let index = 0;
+      let mode = "learn";
+
+      // =======================
+      // INIT SIDEBAR
+      // =======================
+      const list = document.getElementById("categoryList");
+
+      categories.forEach((cat) => {
+        const li = document.createElement("li");
+        li.textContent = cat.name;
+        li.onclick = () => loadActivity(cat.data);
+        list.appendChild(li);
+      });
+
+      // =======================
+      // LOAD ACTIVITY
+      // =======================
+    function loadActivity(data){
+    currentActivity = data;
+    document.getElementById("title").textContent = data.title;
+
+    if(data.type === "flashcard"){
+        renderFlashcard();
+    } else if(data.type === "overlay"){
+        renderOverlay();
+    } else if(data.type === "labeling"){   // 👈 ADD THIS
+        renderLabeling();
+    }
+}
+
+
+      // =======================
+      // FLASHCARD
+      // =======================
+      function renderFlashcard() {
+        const container = document.getElementById("activityContainer");
+
+        container.innerHTML = `
+        <div class="flashcard-container">
+            <div id="card" class="card">
+                <div id="front" class="face front"></div>
+                <div id="back" class="face back"></div>
+            </div>
+        </div>
+
+        <div class="nav">
+            <button onclick="prevCard()">⬅</button>
+            <button onclick="flipCard()">Flip</button>
+            <button onclick="nextCard()">➡</button>
+        </div>
+    `;
+
+        index = 0;
+        drawCard();
+      }
+
+      function drawCard() {
+        const item = currentActivity.items[index];
+
+        const front = document.getElementById("front");
+        const back = document.getElementById("back");
+        const card = document.getElementById("card");
+
+        card.classList.remove("flip");
+        front.innerHTML = "";
+        back.innerHTML = "";
+
+        const img = document.createElement("img");
+        img.className = "img";
+        img.src = currentActivity.folder + "/" + item.file;
+
+        front.appendChild(img);
+
+        if (mode === "learn") {
+          const label = document.createElement("div");
+          label.className = "label";
+          label.textContent = item.name;
+          front.appendChild(label);
+        } else {
+          const input = document.createElement("input");
+          const feedback = document.createElement("div");
+
+          input.onblur = () => {
+            if (input.value.toLowerCase() === item.name) {
+              feedback.textContent = "✔";
+              feedback.style.color = "green";
+            } else {
+              feedback.textContent = "✘";
+              feedback.style.color = "red";
+            }
+          };
+
+          front.appendChild(input);
+          front.appendChild(feedback);
+
+          back.innerHTML = `<h2>${item.name}</h2>`;
+        }
+      }
+
+
+      // =======================
+      // OVERLAY
+      // =======================
+      function renderOverlay() {
+        const container = document.getElementById("activityContainer");
+
+        container.innerHTML = `
+        <div class="family-container">
+            <img src="${currentActivity.image}">
+        </div>
+    `;
+
+        const box = container.querySelector(".family-container");
+
+        currentActivity.labels.forEach((l) => {
+          const div = document.createElement("div");
+          div.className = "overlay-label";
+          div.style.top = l.top + "%";
+          div.style.left = l.left + "%";
+          div.textContent = l.text;
+
+          div.onclick = () => div.classList.toggle("revealed");
+
+          box.appendChild(div);
+        });
+      }
+
+      function renderLabeling(){
+    const container = document.getElementById("activityContainer");
+    container.innerHTML = "";
+
+    currentActivity.images.forEach(imgData => {
+
+        const block = document.createElement("div");
+        block.className = "family-container";
+
+        const img = document.createElement("img");
+        img.src = imgData.src;
+
+        block.appendChild(img);
+
+        imgData.labels.forEach(l => {
+
+            const div = document.createElement("div");
+            div.className = "overlay-label";
+            div.style.top = l.top + "%";
+            div.style.left = l.left + "%";
+
+            if(mode === "learn"){
+                div.textContent = l.text;
+                div.classList.add("revealed");
+            } else {
+    // TEST MODE → click to reveal (same as Family)
+    div.textContent = l.text;
+
+    div.onclick = () => {
+        div.classList.toggle("revealed");
+    };
+}
+
+            block.appendChild(div);
+        });
+
+        container.appendChild(block);
+    });
+}
+
+      // =======================
+      // NAVIGATION
+      // =======================
+
+      
+      function nextCard() {
+        index = (index + 1) % currentActivity.items.length;
+        drawCard();
+      }
+
+      function prevCard() {
+        index =
+          (index - 1 + currentActivity.items.length) %
+          currentActivity.items.length;
+        drawCard();
+      }
+
+      function flipCard() {
+        if (mode === "test") {
+          document.getElementById("card").classList.toggle("flip");
+        }
+      }
+
+    function setMode(m){
+    mode = m;
+
+    if(currentActivity.type === "flashcard"){
+        drawCard();
+    }
+    else if(currentActivity.type === "labeling"){
+        renderLabeling(); // 👈 re-render for test/learn switch
+    }
+}
+      // =======================
+      // LOAD DEFAULT
+      // =======================
+      loadActivity(categories[0].data);
+    </script>
+
+
+
+  </body>
+</html>
