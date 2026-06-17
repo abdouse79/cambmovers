@@ -183,6 +183,7 @@
     </div>
 
     <script src="new_categories.js"></script>
+    <script src="overlay_positions.js"></script>
     <script>
       // =======================
       // CATEGORY CONFIG
@@ -294,6 +295,19 @@
 },
         ...newCategories
       ];
+
+      // Apply overlay_positions.js on top of generated label positions
+      for (const cat of categories) {
+        if (overlayPositions[cat.name]) {
+          if (cat.data.type === 'overlay') {
+            cat.data.labels = overlayPositions[cat.name];
+          } else if (cat.data.type === 'labeling') {
+            overlayPositions[cat.name].forEach((lbls, i) => {
+              if (cat.data.images[i]) cat.data.images[i].labels = lbls;
+            });
+          }
+        }
+      }
 
       // =======================
       // STATE
