@@ -2,38 +2,38 @@ const overlayPositions = {
   "The House": [
     {
       "text": "roof",
-      "top": -2.7,
-      "left": 40.7
+      "top": 5.3,
+      "left": 31.2
     },
     {
       "text": "bedroom",
-      "top": 2,
-      "left": 6.7
+      "top": 17,
+      "left": 17.7
     },
     {
       "text": "kitchen",
-      "top": 33.6,
-      "left": 6.2
+      "top": 55.6,
+      "left": 15.2
     },
     {
       "text": "garage",
-      "top": 47,
-      "left": 4.7
+      "top": 52.8,
+      "left": 3.8
     },
     {
       "text": "dining room",
-      "top": 46.3,
-      "left": 30.3
+      "top": 58.7,
+      "left": 32
     },
     {
       "text": "stairs",
-      "top": 44.8,
-      "left": 47.3
+      "top": 74,
+      "left": 44.7
     },
     {
       "text": "floor",
-      "top": 82.4,
-      "left": 8.5
+      "top": 75.4,
+      "left": 19.5
     },
     {
       "text": "wall",
@@ -42,8 +42,8 @@ const overlayPositions = {
     },
     {
       "text": "door",
-      "top": 96,
-      "left": 27.9
+      "top": 79.4,
+      "left": 31.5
     },
     {
       "text": "hall",
@@ -52,8 +52,8 @@ const overlayPositions = {
     },
     {
       "text": "living room",
-      "top": 103.6,
-      "left": 49.8
+      "top": 83.4,
+      "left": 47.1
     },
     {
       "text": "window",
@@ -62,18 +62,18 @@ const overlayPositions = {
     },
     {
       "text": "fence",
-      "top": 106.5,
-      "left": 77.9
+      "top": 91.2,
+      "left": 72.2
     },
     {
       "text": "gate",
-      "top": 96.5,
-      "left": 86
+      "top": 82.5,
+      "left": 82.5
     },
     {
       "text": "garden",
-      "top": 85.5,
-      "left": 89.9
+      "top": 67.8,
+      "left": 87.7
     },
     {
       "text": "upstairs",
@@ -94,8 +94,8 @@ const overlayPositions = {
     },
     {
       "text": "Art studio",
-      "top": -2.5,
-      "left": 34.5
+      "top": 3.1,
+      "left": 38.2
     },
     {
       "text": "Science lab",
@@ -104,8 +104,8 @@ const overlayPositions = {
     },
     {
       "text": "classroom",
-      "top": -0.2,
-      "left": 4.7
+      "top": 29.1,
+      "left": 6.8
     },
     {
       "text": "Language lab",
@@ -129,8 +129,8 @@ const overlayPositions = {
     },
     {
       "text": "gym",
-      "top": 96.6,
-      "left": 82.7
+      "top": 84.9,
+      "left": 86.6
     }
   ],
   "Places in Town": [
@@ -261,102 +261,102 @@ const overlayPositions = {
     },
     {
       "text": "bus station",
-      "top": 96,
-      "left": 12.9
+      "top": 90.3,
+      "left": 14.2
     },
     {
       "text": "airport",
-      "top": 86,
-      "left": 92.4
+      "top": 81.5,
+      "left": 93
     }
   ],
   "Parts of the Body": [
     {
       "text": "leg",
-      "top": -3.1,
-      "left": 48.9
+      "top": 13.6,
+      "left": 55.2
     },
     {
       "text": "knee",
-      "top": 3.5,
-      "left": 88.3
+      "top": 4.9,
+      "left": 61.5
     },
     {
       "text": "back",
-      "top": 29.1,
-      "left": 101.3
+      "top": 41.9,
+      "left": 72.3
     },
     {
       "text": "foot",
-      "top": 37.9,
-      "left": 5.9
+      "top": 26.2,
+      "left": 11
     },
     {
       "text": "stomach",
-      "top": 36.8,
-      "left": 98.6
+      "top": 36.5,
+      "left": 89.7
     },
     {
       "text": "shoulder",
-      "top": 44.3,
-      "left": 98.1
+      "top": 52.1,
+      "left": 70.8
     },
     {
       "text": "head",
-      "top": 57.8,
-      "left": 23.1
+      "top": 50.5,
+      "left": 42.7
     },
     {
       "text": "arm",
-      "top": 65,
-      "left": 92.6
+      "top": 63.4,
+      "left": 78.7
     },
     {
       "text": "neck",
-      "top": 69.9,
-      "left": 67.9
+      "top": 53.4,
+      "left": 65.2
     },
     {
       "text": "elbow",
-      "top": 75.3,
-      "left": 94.7
+      "top": 70.1,
+      "left": 78
     },
     {
       "text": "hand",
-      "top": 78.7,
-      "left": 40.2
+      "top": 85.2,
+      "left": 49
     }
   ],
   "Face": [
     {
       "text": "nose",
-      "top": 199.5,
-      "left": 21.1
+      "top": 46.3,
+      "left": 52.7
     },
     {
       "text": "teeth",
-      "top": 32.9,
-      "left": 84.6
+      "top": 54.6,
+      "left": 54.2
     },
     {
       "text": "tongue",
-      "top": 44.2,
-      "left": 87.3
+      "top": 56.3,
+      "left": 57.5
     },
     {
       "text": "ear",
-      "top": 199.5,
-      "left": -9.4
+      "top": 49.7,
+      "left": 13.2
     },
     {
       "text": "eye",
-      "top": 66.1,
-      "left": 2.8
+      "top": 43.3,
+      "left": 30.6
     },
     {
       "text": "mouth",
-      "top": 79.4,
-      "left": 44.1
+      "top": 57.1,
+      "left": 44
     }
   ],
   "At the Theatre": [
@@ -399,43 +399,43 @@ const overlayPositions = {
   "Weather": [
     {
       "text": "foggy",
-      "top": 135.4,
-      "left": 27
+      "top": 9,
+      "left": 34.1
     },
     {
       "text": "rainy",
-      "top": -8.6,
-      "left": 54
+      "top": 11.4,
+      "left": 48.8
     },
     {
       "text": "snowy",
-      "top": -8.6,
-      "left": 67.4
+      "top": 9.3,
+      "left": 61.8
     },
     {
       "text": "cloudy",
-      "top": 135.4,
-      "left": 3.4
+      "top": 13.2,
+      "left": 17.2
     },
     {
       "text": "wet",
-      "top": 66.5,
-      "left": 60.9
+      "top": 39.7,
+      "left": 58.2
     },
     {
       "text": "dry",
-      "top": 74.4,
-      "left": 45.7
+      "top": 34.9,
+      "left": 39.9
     },
     {
       "text": "sunny",
-      "top": 181.2,
-      "left": 72
+      "top": 37.6,
+      "left": 24.6
     },
     {
       "text": "windy",
-      "top": 181.2,
-      "left": 93.8
+      "top": 64.3,
+      "left": 83.5
     },
     {
       "text": "north",
@@ -444,36 +444,36 @@ const overlayPositions = {
     },
     {
       "text": "south",
-      "top": 39.4,
-      "left": 86.8
+      "top": 33.9,
+      "left": 86.4
     },
     {
       "text": "east",
-      "top": 24.9,
-      "left": 97.4
+      "top": 13.8,
+      "left": 95.5
     },
     {
       "text": "west",
-      "top": 24.9,
-      "left": 77.6
+      "top": 14.6,
+      "left": 76.2
     }
   ],
   "Technology": [
     [
       {
         "text": "webcam",
-        "top": 5,
-        "left": 5
+        "top": -3.4,
+        "left": 13.7
       },
       {
         "text": "screen",
-        "top": 20,
-        "left": 5
+        "top": 21.5,
+        "left": 20.8
       },
       {
         "text": "keyboard",
-        "top": 65,
-        "left": 5
+        "top": 44.6,
+        "left": 39.1
       },
       {
         "text": "printer",
@@ -482,8 +482,8 @@ const overlayPositions = {
       },
       {
         "text": "mouse",
-        "top": 30,
-        "left": 75
+        "top": 51,
+        "left": 61.7
       },
       {
         "text": "scanner",
@@ -494,23 +494,23 @@ const overlayPositions = {
     [
       {
         "text": "phone charger",
-        "top": 5,
-        "left": 5
+        "top": 139.5,
+        "left": 16.6
       },
       {
         "text": "email",
-        "top": 35,
-        "left": 35
+        "top": 154.3,
+        "left": 56.5
       },
       {
         "text": "SIM card",
-        "top": 45,
-        "left": 65
+        "top": 155.6,
+        "left": 92.1
       },
       {
         "text": "touchscreen",
-        "top": 80,
-        "left": 40
+        "top": 165.9,
+        "left": 59.5
       }
     ]
   ],
