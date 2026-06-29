@@ -1,0 +1,1764 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Test 1 — Cambridge A1 Movers</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;background:#f0f4f8;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+
+    /* TOP BAR */
+    header{background:#1a237e;color:white;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+    header a{color:#90caf9;text-decoration:none;font-size:13px;white-space:nowrap}
+    header h1{font-size:16px;font-weight:bold}
+    header .part-badge{margin-left:auto;background:#283593;padding:5px 12px;border-radius:20px;font-size:13px;white-space:nowrap}
+
+    /* PROGRESS */
+    .progress-wrap{background:#e8eaf6;height:6px;flex-shrink:0}
+    .progress-bar{height:6px;background:#3f51b5;transition:width .3s}
+
+    /* SECTION LABEL */
+    .section-label{text-align:center;font-size:12px;font-weight:bold;letter-spacing:.08em;padding:6px 0;flex-shrink:0}
+    .section-label.listening{background:#e3f2fd;color:#0d47a1}
+    .section-label.reading{background:#e8f5e9;color:#1b5e20}
+    .section-label.speaking{background:#f3e5f5;color:#6a1b9a}
+    .speak-note{background:#f3e5f5;border-left:4px solid #9c27b0;padding:10px 14px;border-radius:0 6px 6px 0;font-size:13px;color:#6a1b9a;margin:12px 0;font-style:italic}
+    .speak-img-row{display:flex;gap:16px;margin:14px 0}
+    .speak-img-box{flex:1;aspect-ratio:4/3;background:#ede7f6;border:2px dashed #9c27b0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9c27b0;font-size:13px;font-weight:bold;text-align:center;padding:12px}
+    .speak-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+    .speak-grid-box{aspect-ratio:1;background:#ede7f6;border:2px dashed #9c27b0;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9c27b0;font-size:12px;font-weight:bold;text-align:center}
+
+    /* SLIDE */
+    .slide{display:none;flex:1;overflow-y:auto;padding:18px 16px 16px}
+    .slide.active{display:block}
+
+    /* CARD */
+    .card{background:white;border-radius:10px;padding:20px;box-shadow:0 2px 6px rgba(0,0,0,.08);max-width:820px;margin:0 auto}
+    .card h2{color:#1a237e;font-size:16px;margin-bottom:8px;padding-bottom:8px;border-bottom:2px solid #e8eaf6}
+    .instr{background:#e8eaf6;border-left:4px solid #3f51b5;padding:9px 14px;border-radius:0 6px 6px 0;margin:10px 0 14px;font-size:13px;color:#333;line-height:1.5}
+    .audio-row{display:flex;align-items:center;gap:10px;background:#f5f5f5;border:1px dashed #aaa;border-radius:8px;padding:9px 14px;margin:8px 0;font-size:13px;color:#555}
+    .img-ph{background:#e3f2fd;border:2px dashed #1565c0;border-radius:8px;padding:12px 14px;margin:10px 0;font-size:12px;color:#1565c0;line-height:1.6}
+    .img-ph strong{display:block;margin-bottom:4px;font-size:13px}
+
+    /* BOTTOM NAV */
+    .nav-bar{background:white;border-top:1px solid #ddd;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;gap:10px}
+    .nav-bar .step-info{font-size:13px;color:#555;text-align:center;flex:1}
+    .btn{padding:10px 24px;border:none;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+    .btn-prev{background:#e8eaf6;color:#1a237e}
+    .btn-prev:disabled{opacity:.35;cursor:default}
+    .btn-next{background:#1a237e;color:white}
+    .btn-submit{background:#388e3c;color:white}
+    .btn:hover:not(:disabled){opacity:.88}
+
+    /* ── L1 HOTSPOT MATCHING ── */
+    .scene-wrap{position:relative;display:block;width:100%;margin:10px 0}
+    .scene-wrap img{width:100%;border-radius:8px;display:block}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.6),0 2px 6px rgba(0,0,0,.4)}50%{box-shadow:0 0 0 6px rgba(255,255,255,0),0 2px 6px rgba(0,0,0,.4)}}
+    .hotspot{position:absolute;transform:translate(-50%,-50%);min-width:36px;height:36px;padding:0 8px;border-radius:18px;border:3px solid white;background:rgba(0,0,0,0.55);color:white;font-size:13px;font-weight:bold;cursor:pointer;transition:background .2s,transform .15s;z-index:10;white-space:nowrap;line-height:30px;text-align:center;animation:pulse 2s infinite}
+    .hotspot:hover{background:rgba(0,0,0,.8);transform:translate(-50%,-50%) scale(1.15);animation:none}
+    .hotspot.matched{animation:none;padding:0 12px;font-size:12px}
+    .name-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center;margin-top:14px;margin-bottom:14px}
+    .name-card{padding:9px 22px;border:3px solid #1a237e;border-radius:25px;background:white;color:#1a237e;font-size:15px;font-weight:bold;cursor:pointer;transition:all .2s}
+    .name-card:hover{background:#e8eaf6}
+    .name-card.active{box-shadow:0 0 0 4px #7986cb;transform:scale(1.06)}
+    .name-card.done{color:white}
+    .match-hint{text-align:center;font-size:13px;color:#666;margin-top:10px;min-height:20px}
+
+    /* ── L2 FORM ── */
+    .form-card{background:#e3f2fd;border:1px solid #90caf9;border-radius:14px;padding:28px 32px;max-width:560px;margin:0 auto;box-shadow:0 6px 24px rgba(21,101,192,0.13),0 1.5px 6px rgba(0,0,0,0.07)}
+    .form-card h4{text-align:center;color:#0d47a1;margin-bottom:18px;font-size:17px;letter-spacing:.3px}
+    .form-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #ffe082;gap:14px}
+    .form-row:last-child{border-bottom:none}
+    .form-row label{font-size:15px;min-width:210px;font-weight:500;color:#444}
+    .form-row input{flex:1;border:none;border-bottom:2.5px solid #f57c00;background:transparent;font-size:15px;padding:4px 6px;outline:none;transition:border-color .2s}
+    .form-row input:focus{border-bottom-color:#e65100;background:#fff3e0;border-radius:4px 4px 0 0}
+    .form-row .given{color:#555;font-style:italic;font-size:15px}
+
+    /* ── L3 ACTIVITIES ── */
+    .act-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}
+    .act-card{border:1px solid #ddd;border-radius:6px;padding:8px;text-align:center;font-size:12px;color:#555}
+    .act-letter{display:inline-block;width:24px;height:24px;background:#3f51b5;color:white;border-radius:50%;line-height:24px;font-weight:bold;margin-bottom:4px}
+    .child-row{border:1px solid #f48fb1;border-radius:6px;padding:8px;text-align:center;font-size:12px;background:#fce4ec;margin-bottom:6px}
+    .child-row label{display:block;font-weight:bold;margin:4px 0 6px}
+    .child-row select{width:100%;border:2px solid #e91e63;border-radius:4px;padding:4px;font-size:14px;font-weight:bold;outline:none;background:#fff;cursor:pointer}
+    .child-row select:disabled{border-color:#4caf50;background:#e8f5e9;color:#2e7d32}
+    .person-ph{width:100%;aspect-ratio:4/3;background:#f8bbd0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:4px}
+
+    /* ── L4 MCQ ── */
+    .mcq-q{margin-bottom:20px}
+    .mcq-q p{font-weight:bold;margin-bottom:8px;font-size:14px}
+    .mcq-opts{display:flex;gap:8px}
+    .mcq-opt{flex:1;border:2px solid #ddd;border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:border-color .15s}
+    .mcq-opt.sel{border-color:#3f51b5;background:#e8eaf6}
+    .opt-letter{display:inline-block;width:22px;height:22px;border-radius:50%;background:#ddd;line-height:22px;font-size:12px;font-weight:bold;margin-bottom:4px}
+    .mcq-opt.sel .opt-letter{background:#3f51b5;color:white}
+    .opt-img{background:#f5f5f5;border-radius:4px;padding:8px;font-size:12px;color:#555;min-height:56px;display:flex;align-items:center;justify-content:center;margin-top:4px}
+    .opt-img{background:#f5f5f5;border-radius:4px;padding:8px;font-size:12px;color:#555;min-height:56px;display:flex;align-items:center;justify-content:center;margin-top:4px}
+
+    /* ── L5 COLOUR/WRITE ── */
+    .ctask{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee;flex-wrap:wrap}
+    .ctask label{min-width:230px;font-size:14px}
+    .ctask select,.ctask input[type=text]{padding:5px 10px;border:1px solid #ccc;border-radius:4px;font-size:14px}
+    .colour-spot{position:absolute;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;border:3px solid white;background:rgba(255,255,255,0.75);cursor:pointer;font-size:12px;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,0.4);z-index:10;display:flex;align-items:center;justify-content:center;transition:transform .15s;animation:pulse 2s infinite}
+    .colour-spot.picked{animation:none;border-color:#333}
+    #l5-palette{position:fixed;display:none;background:white;border-radius:12px;padding:10px;box-shadow:0 6px 24px rgba(0,0,0,0.25);z-index:1000;grid-template-columns:repeat(4,1fr);gap:8px}
+    .pal-swatch{width:36px;height:36px;border-radius:50%;border:2px solid #ddd;cursor:pointer;transition:transform .1s,border-color .1s}
+    .pal-swatch:hover{transform:scale(1.2);border-color:#333}
+
+    /* ── RW1 ── */
+    .word-box{background:#f9fbe7;border:2px solid #aed581;border-radius:8px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .word-chip{background:white;border:1px solid #aed581;border-radius:14px;padding:4px 14px;font-weight:bold;font-size:14px}
+    .def-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #eee;flex-wrap:wrap}
+    .def-num{font-weight:bold;color:#3f51b5;min-width:28px;padding-top:2px}
+    .def-text{flex:1;font-size:14px;min-width:200px}
+    .def-ans input{border:none;border-bottom:2px solid #3f51b5;width:120px;font-size:14px;padding:2px 4px;outline:none;text-align:center}
+
+    /* ── RW2 DIALOGUE ── */
+    .dialogue{display:flex;flex-direction:column;gap:6px}
+    .dl-line{display:flex;gap:10px;align-items:flex-start}
+    .speaker{font-weight:bold;min-width:60px;color:#e65100;font-size:14px}
+    .speech{font-size:14px}
+    .dl-q{background:#fbe9e7;border-radius:6px;padding:10px 14px;margin:4px 0}
+    .dl-q p{font-weight:bold;color:#bf360c;margin-bottom:8px;font-size:14px}
+    .dl-opts{display:flex;flex-direction:column;gap:5px}
+    .dl-opt{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #90caf9;border-radius:6px;cursor:pointer;font-size:14px;background:#e3f2fd}
+    .dl-opt:hover{background:#bbdefb}
+
+    /* ── RW3 ── */
+    .pw-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+    .pw-card{border:1px solid #b3e5fc;border-radius:6px;text-align:center;padding:8px}
+    .pw-img{height:44px;background:#e1f5fe;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#0277bd;margin-bottom:4px}
+    .pw-word{font-weight:bold;font-size:13px}
+    .story-text{font-size:15px;line-height:2.1;text-align:justify}
+    .g-input{border:none;border-bottom:2px solid #0288d1;width:100px;font-size:15px;text-align:center;outline:none;padding:0 4px}
+    .g-num{display:inline-block;background:#0288d1;color:white;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;font-size:11px;font-weight:bold;vertical-align:middle;margin-right:2px}
+    .title-pick{margin-top:16px}
+    .title-pick strong{display:block;margin-bottom:8px;font-size:14px}
+
+    /* ── RW4 ── */
+    .story-box{background:#fff8e1;border-left:4px solid #ffd54f;padding:16px 20px;border-radius:4px;font-size:15px;line-height:2.4;text-align:justify}
+    .inline-sel{border:none;border-bottom:2.5px solid #3f51b5;background:transparent;font-size:15px;font-family:inherit;color:#1a237e;font-weight:bold;cursor:pointer;outline:none;padding:0 4px;margin:0 2px;vertical-align:baseline}
+    .gap-num{font-size:11px;font-weight:bold;color:#3f51b5;vertical-align:super;margin-right:1px}
+    .gram-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #eee;flex-wrap:wrap}
+    .gram-num{font-weight:bold;color:#3f51b5;min-width:28px}
+    .gram-text{font-size:14px;flex:1;min-width:180px}
+    .gram-opts{display:flex;gap:6px}
+    .gram-opt{padding:5px 14px;border:2px solid #ddd;border-radius:16px;cursor:pointer;font-size:13px;transition:all .15s}
+    .gram-opt.sel{border-color:#3f51b5;background:#e8eaf6;color:#1a237e;font-weight:bold}
+
+    /* ── RW5 ── */
+    .comp-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid #eee;flex-wrap:wrap;font-size:14px}
+    .comp-num{font-weight:bold;color:#3f51b5;min-width:28px}
+    .comp-input{border:none;border-bottom:2px solid #3f51b5;width:110px;font-size:14px;outline:none;padding:2px 4px;text-align:center}
+
+    /* ── MODAL ── */
+    .modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+    .modal-ov.open{display:flex}
+    .modal{background:white;border-radius:12px;padding:28px;max-width:700px;width:96%;max-height:90vh;overflow-y:auto}
+    .modal h2{text-align:center;color:#1a237e;margin-bottom:18px}
+    .score-sec{background:#e8eaf6;border-radius:8px;padding:14px 18px;margin-bottom:12px}
+    .score-sec h3{color:#1a237e;margin-bottom:8px}
+    .score-bar{display:flex;justify-content:space-between;align-items:center;margin:5px 0}
+    .score-v{font-size:22px;font-weight:bold;color:#3f51b5}
+    .score-total{background:#1a237e;color:white;border-radius:8px;padding:14px;text-align:center}
+    .score-big{font-size:40px;font-weight:bold}
+    .wrong-list{margin-top:16px;font-size:13px}
+    .wrong-list h4{color:#333;margin-bottom:10px;font-size:14px}
+    .rev-list{display:flex;flex-direction:column;gap:5px}
+    .rev-item{display:grid;grid-template-columns:140px 1fr auto;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-size:13px}
+    .rev-ok{background:#e8f5e9;border:1px solid #a5d6a7}
+    .rev-wrong{background:#ffebee;border:1px solid #ef9a9a}
+    .rev-label{font-weight:bold;color:#555;font-size:12px}
+    .rev-user{color:#1a237e}
+    .rev-correct{color:#c62828;font-size:12px;text-align:right;white-space:nowrap}
+    .close-btn{display:block;margin:20px auto 0;background:#3f51b5;color:white;border:none;padding:10px 30px;border-radius:8px;cursor:pointer;font-size:15px}
+
+    /* ── CUSTOM AUDIO PLAYER ── */
+    .custom-player{display:flex;align-items:center;gap:10px;flex:1}
+    .cp-btn{background:#1a237e;color:white;border:none;padding:6px 16px;border-radius:6px;font-size:13px;font-weight:bold;cursor:pointer;white-space:nowrap;min-width:90px;transition:background .2s}
+    .cp-btn:hover:not(:disabled){background:#283593}
+    .cp-btn:disabled{background:#90a4ae;cursor:default}
+    .cp-bar{flex:1;height:6px;background:#ddd;border-radius:3px;overflow:hidden;pointer-events:none}
+    .cp-fill{height:100%;background:#3f51b5;width:0%;transition:width .4s linear}
+    .cp-time{font-size:12px;color:#555;min-width:38px;text-align:right;font-family:monospace}
+
+    /* Audio scripts */
+    details{background:#f5f5f5;border:1px solid #ddd;border-radius:8px;padding:12px 16px;margin-top:16px;max-width:820px;margin-left:auto;margin-right:auto}
+    details summary{font-weight:bold;cursor:pointer;font-size:14px;color:#1a237e}
+    details pre{white-space:pre-wrap;font-size:12px;line-height:1.7;margin-top:10px;color:#333}
+
+    /* ── INTRO SCREEN ── */
+    #intro-overlay{position:fixed;inset:0;background:#1a237e;z-index:3000;display:flex;align-items:center;justify-content:center;padding:20px}
+    #intro-box{background:white;border-radius:16px;padding:48px 52px;max-width:500px;width:100%;text-align:center;box-shadow:0 12px 48px rgba(0,0,0,.35)}
+    #intro-box .intro-logo{font-size:13px;font-weight:bold;letter-spacing:.12em;color:#7986cb;text-transform:uppercase;margin-bottom:6px}
+    #intro-box h1{color:#1a237e;font-size:24px;margin-bottom:6px;line-height:1.3}
+    #intro-box h2{color:#3f51b5;font-size:16px;font-weight:normal;margin-bottom:28px}
+    .intro-info{background:#e8eaf6;border-radius:10px;padding:18px 24px;margin-bottom:28px;text-align:left}
+    .intro-info p{font-size:14px;color:#333;line-height:1.8;margin:0}
+    .intro-info p strong{color:#1a237e}
+    .intro-name-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-bottom:32px}
+    .intro-name-row label{font-size:14px;font-weight:bold;color:#444}
+    .intro-name-row input{width:100%;border:2px solid #3f51b5;border-radius:8px;padding:10px 14px;font-size:16px;outline:none;transition:border-color .2s}
+    .intro-name-row input:focus{border-color:#1a237e;background:#f5f5ff}
+    #btn-start{width:100%;padding:14px;background:#1a237e;color:white;border:none;border-radius:10px;font-size:17px;font-weight:bold;cursor:pointer;letter-spacing:.04em;transition:background .2s}
+    #btn-start:hover{background:#283593}
+
+    /* ── ACTIVITY TIMER ── */
+    #act-timer{position:fixed;top:68px;right:18px;z-index:900;background:#2e7d32;color:white;padding:8px 18px;border-radius:22px;font-size:15px;font-weight:bold;font-family:monospace;letter-spacing:.05em;box-shadow:0 3px 12px rgba(0,0,0,.28);display:none;transition:background .4s;white-space:nowrap}
+    #act-timer .act-label{font-size:10px;font-weight:normal;letter-spacing:.08em;text-transform:uppercase;display:block;text-align:center;opacity:.85;margin-bottom:1px}
+    #act-timer.yellow{background:#f57c00}
+    #act-timer.red{background:#c62828;animation:blink-red 1s infinite}
+
+    /* ── TIMER ── */
+    #timer-badge{background:#2e7d32;color:white;padding:5px 14px;border-radius:20px;font-size:15px;font-weight:bold;font-family:monospace;letter-spacing:.05em;transition:background .4s;white-space:nowrap}
+    #timer-badge.warn{background:#f57c00}
+    #timer-badge.danger{background:#c62828;animation:blink-red 1s infinite}
+    @keyframes blink-red{0%,100%{opacity:1}50%{opacity:.55}}
+    #timer-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center}
+    #timer-modal.show{display:flex}
+    #timer-modal-box{background:white;border-radius:14px;padding:36px 44px;text-align:center;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    #timer-modal-box h3{color:#c62828;font-size:20px;margin-bottom:12px}
+    #timer-modal-box p{color:#333;font-size:14px;line-height:1.6;margin-bottom:20px}
+    #timer-modal-btn{background:#1a237e;color:white;border:none;padding:10px 28px;border-radius:8px;font-size:14px;font-weight:bold;cursor:pointer}
+
+    @media(max-width:600px){
+      .act-grid{grid-template-columns:repeat(2,1fr)}
+      .pw-grid{grid-template-columns:repeat(1,1fr)}
+      .mcq-opts{flex-direction:column}
+      .gram-row{flex-direction:column;align-items:flex-start}
+    }
+  </style>
+  <script src="jl-coloringBook.js"></script>
+</head>
+<body>
+
+<header>
+  <a href="index.html">← Back</a>
+  <h1>Cambridge A1 Movers — Mock Test 1</h1>
+  <span class="part-badge" id="part-badge">Part 1 / 11</span>
+  <span id="timer-badge">25:00</span>
+</header>
+
+<!-- Intro overlay -->
+<div id="intro-overlay">
+  <div id="intro-box">
+    <div class="intro-logo">Cambridge English</div>
+    <h1>Cambridge Movers Mock Exam</h1>
+    <h2>A1 Movers</h2>
+    <div class="intro-info">
+      <p>
+        <strong>Listening</strong><br>
+        There are <strong>25 questions</strong>.<br>
+        You have <strong>25 minutes</strong>.
+      </p>
+    </div>
+    <div class="intro-name-row">
+      <label for="student-name">Write your name:</label>
+      <input type="text" id="student-name" placeholder="Your full name" autocomplete="off">
+    </div>
+    <button id="btn-start" onclick="startTest()">Start Test</button>
+  </div>
+</div>
+
+<!-- Activity timer (R&W slides) -->
+<div id="act-timer"><span class="act-label">Activity</span>05:00</div>
+
+<!-- Time-up modal -->
+<div id="timer-modal">
+  <div id="timer-modal-box">
+    <h3 id="timer-modal-title">⏰ Time is up!</h3>
+    <p id="timer-modal-msg">The listening section has ended. Moving to Reading &amp; Writing now.</p>
+    <button id="timer-modal-btn" onclick="dismissTimerModal()">Continue</button>
+  </div>
+</div>
+
+<div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:9%"></div></div>
+<div class="section-label listening" id="section-label">LISTENING</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 1 — Listening Part 1
+═══════════════════════════════════════════════════ -->
+<div class="slide active" data-section="listening">
+  <div class="card">
+    <h2>Listening — Part 1 &nbsp;·&nbsp; Questions 1–5</h2>
+    <div class="instr">Listen and draw lines. Match each name to the correct person at the birthday party. There is one example.</div>
+    <div class="audio-row">🔊 <strong>test1_L1.mp3</strong>&nbsp;
+      <div class="custom-player"><button class="cp-btn" onclick="cpPlay(this)">▶ Play</button><div class="cp-bar"><div class="cp-fill"></div></div><span class="cp-time">0:00</span><audio class="locked-audio"><source src="audio/test1_L1.mp3" type="audio/mpeg"></audio></div>
+    </div>
+    <!-- Name cards top (first 3) -->
+    <div class="name-row" id="l1-name-row-top"></div>
+    <!-- Scene with hotspot buttons -->
+    <div class="scene-wrap" id="l1-scene">
+      <img src="images/tests/test1_L1_scene.png" alt="Birthday party scene">
+      <button class="hotspot" data-person="1" style="top:38%;left:9%"  onclick="pickHotspot(1)">1</button>
+      <button class="hotspot" data-person="2" style="top:34%;left:29%" onclick="pickHotspot(2)">2</button>
+      <button class="hotspot" data-person="3" style="top:35%;left:43%" onclick="pickHotspot(3)">3</button>
+      <button class="hotspot" data-person="4" style="top:40%;left:65%" onclick="pickHotspot(4)">4</button>
+      <button class="hotspot" data-person="5" style="top:42%;left:80%" onclick="pickHotspot(5)">5</button>
+      <button class="hotspot" data-person="6" style="top:62%;left:55%" onclick="pickHotspot(6)">6</button>
+      <button class="hotspot" data-person="7" style="top:63%;left:83%" onclick="pickHotspot(7)">7</button>
+    </div>
+    <!-- Name cards bottom (last 3) -->
+    <div class="name-row" id="l1-name-row-bottom"></div>
+    <p class="match-hint" id="l1-hint">👆 Click a name below, then click the correct person in the picture.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 2 — Listening Part 2
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="listening">
+  <div class="card">
+    <h2>Listening — Part 2 &nbsp;·&nbsp; Questions 6–10</h2>
+    <div class="instr">Listen and write. Fill in the missing information on the form. There is one example.</div>
+    <div class="audio-row">🔊 <strong>test1_L2.mp3</strong>&nbsp;
+      <div class="custom-player"><button class="cp-btn" onclick="cpPlay(this)">▶ Play</button><div class="cp-bar"><div class="cp-fill"></div></div><span class="cp-time">0:00</span><audio class="locked-audio"><source src="audio/test1_L2.mp3" type="audio/mpeg"></audio></div>
+    </div>
+    <img src="images/tests/greenfield_sport.png" alt="Greenfield Sport" style="width:100%;height:auto;display:block;border-radius:8px;margin-bottom:14px">
+    <div class="form-card">
+      <h4>⚽ Greenfield Sports Club — New Member Form</h4>
+      <div class="form-row"><label>First name:</label><span class="given">Mary</span></div>
+      <div class="form-row"><label>6. Activity Lily practises:</label><input type="text" id="l2q6" data-answer="swimming" placeholder="write here…"></div>
+      <div class="form-row"><label>7. Class lots of children love:</label><input type="text" id="l2q7" data-answer="gymnastics" placeholder="write here…"></div>
+      <div class="form-row"><label>8. Mary's last name:</label><input type="text" id="l2q8" data-answer="brown" placeholder="write here…"></div>
+      <div class="form-row"><label>9. Mary's day of practice:</label><input type="text" id="l2q9" data-answer="thursday" placeholder="write here…"></div>
+      <div class="form-row"><label>10. Hour of practice:</label><input type="text" id="l2q10" data-answer="four|4" placeholder="write here…"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 3 — Listening Part 3
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="listening">
+  <div class="card">
+    <h2>Listening — Part 3 &nbsp;·&nbsp; Questions 11–15</h2>
+    <div class="instr">What does each person in Sam's family like doing? Listen and write a letter (A–H) next to each family member. There is one example.</div>
+    <div class="audio-row">🔊 <strong>test1_L3.mp3</strong>&nbsp;
+      <div class="custom-player"><button class="cp-btn" onclick="cpPlay(this)">▶ Play</button><div class="cp-bar"><div class="cp-fill"></div></div><span class="cp-time">0:00</span><audio class="locked-audio"><source src="audio/test1_L3.mp3" type="audio/mpeg"></audio></div>
+    </div>
+    <div style="display:flex;gap:24px;align-items:flex-start;margin-top:10px">
+      <div id="l3-children" style="flex:0 0 200px"></div>
+      <div class="act-grid" id="l3-acts" style="flex:1;margin:0"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 4 — Listening Part 4
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="listening">
+  <div class="card">
+    <h2>Listening — Part 4 &nbsp;·&nbsp; Questions 16–20</h2>
+    <div class="instr">Listen and tick (✓) the correct picture. There is one example.</div>
+    <div class="audio-row">🔊 <strong>test1_L4.mp3</strong>&nbsp;
+      <div class="custom-player"><button class="cp-btn" onclick="cpPlay(this)">▶ Play</button><div class="cp-bar"><div class="cp-fill"></div></div><span class="cp-time">0:00</span><audio class="locked-audio"><source src="audio/test1_L4.mp3" type="audio/mpeg"></audio></div>
+    </div>
+    <div id="l4-qs"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 5 — Listening Part 5
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="listening">
+  <div class="card">
+    <h2>Listening — Part 5 &nbsp;·&nbsp; Questions 21–25</h2>
+    <div class="instr">Listen and colour and write. There is one example.</div>
+    <div class="audio-row">🔊 <strong>test1_L5.mp3</strong>&nbsp;
+      <div class="custom-player"><button class="cp-btn" onclick="cpPlay(this)">▶ Play</button><div class="cp-bar"><div class="cp-fill"></div></div><span class="cp-time">0:00</span><audio class="locked-audio"><source src="audio/test1_L5.mp3" type="audio/mpeg"></audio></div>
+    </div>
+    <div style="max-width:700px;margin:10px auto">
+      <jl-coloringbook>
+        <img src="images/tests/test1_L5_scene.png" alt="Playground scene">
+      </jl-coloringbook>
+    </div>
+    <div id="l5-tasks" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 6 — R&W Part 1
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 1 &nbsp;·&nbsp; Questions 26–30</h2>
+    <div class="instr">Look and read. Choose the correct word from the box and write it on the line. There is one example.</div>
+    <div class="word-box">
+      <span class="word-chip">tail</span>
+      <span class="word-chip">lake</span>
+      <span class="word-chip">pocket</span>
+      <span class="word-chip">cloud</span>
+      <span class="word-chip">score</span>
+      <span class="word-chip">stage</span>
+      <span class="word-chip">cage</span>
+    </div>
+    <div id="rw1-defs"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 7 — R&W Part 2
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 2 &nbsp;·&nbsp; Questions 31–36</h2>
+    <div class="instr">Read the conversation and choose the best answer. Tick the letter (A, B or C).</div>
+    <div id="rw2-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 8 — R&W Part 3
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 3 &nbsp;·&nbsp; Questions 37–42</h2>
+    <div class="instr">Read the story. Write one word in each gap (Q37–41) using words from the box. Then choose the best title (Q42).</div>
+    <div id="rw3-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 9 — R&W Part 4
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 4 &nbsp;·&nbsp; Questions 43–47</h2>
+    <div class="instr">Read the text. Choose the best word (A, B or C) for each space.</div>
+    <img src="images/tests/shopping_center.png" alt="Shopping centre" style="width:100%;height:auto;display:block;border-radius:8px;margin-bottom:12px">
+    <div class="story-box">
+      Last weekend, Emma and her mum planned a special day out. The weather was
+      <u>sunny</u> <em style="font-size:12px;color:#888">(example)</em>
+      and they were both very excited. Every Saturday morning, Emma
+      <span class="gap-num">43</span><select id="rw4-43" class="inline-sel"><option value="">___</option><option value="A">went</option><option value="B">goes</option><option value="C">go</option></select>
+      to the shopping centre with her mum — it is her favourite place in town. The centre was very large and
+      <span class="gap-num">44</span><select id="rw4-44" class="inline-sel"><option value="">___</option><option value="A">have</option><option value="B">had</option><option value="C">has</option></select>
+      more than sixty different shops. There were clothes shops, a big bookshop, a toy shop,
+      and even a cinema on the top floor. Emma wanted to buy a new dress
+      <span class="gap-num">45</span><select id="rw4-45" class="inline-sel"><option value="">___</option><option value="A">of</option><option value="B">to</option><option value="C">for</option></select>
+      her birthday party the following week. She tried on five different dresses before choosing
+      a lovely purple one with silver buttons. After all that shopping they felt hungry, so they
+      stopped at the café inside the centre. At the café, they ate some
+      <span class="gap-num">46</span><select id="rw4-46" class="inline-sel"><option value="">___</option><option value="A">deliciously</option><option value="B">delicious</option><option value="C">deliciousness</option></select>
+      sandwiches and a glass of orange juice. Finally, after three hours of exploring, they took the bus home.
+      Emma went home feeling very happy
+      <span class="gap-num">47</span><select id="rw4-47" class="inline-sel"><option value="">___</option><option value="A">of</option><option value="B">at</option><option value="C">with</option></select>
+      all the things she had bought. She could not wait to show her dad and her little brother
+      the purple dress!
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 10 — R&W Part 5
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 5 &nbsp;·&nbsp; Questions 48–54</h2>
+    <div class="instr">Read the story. Write words to complete the sentences. Use no more than three words.</div>
+    <div id="rw5-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 11 — R&W Part 6
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="reading">
+  <div class="card">
+    <h2>Reading &amp; Writing — Part 6 &nbsp;·&nbsp; Questions 55–60</h2>
+    <div class="instr">Look at the picture and read the questions. Write one-word answers.</div>
+    <div id="rw6-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 12 — Speaking Part 1
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="speaking">
+  <div class="card">
+    <h2>Speaking — Part 1</h2>
+    <div class="instr">Look at the two pictures. They are very similar. Can you find the differences?</div>
+    <div class="speak-note">This activity is assessed by your teacher. There is no written score.</div>
+    <div class="speak-img-row">
+      <div class="speak-img-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/pictureA.png" alt="Picture A" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-img-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/pictureB.png" alt="Picture B" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+    </div>
+    <div class="instr" style="margin-top:8px">Tell your teacher about as many differences as you can find. Try to use full sentences!</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     SLIDE 13 — Speaking Part 2
+═══════════════════════════════════════════════════ -->
+<div class="slide" data-section="speaking">
+  <div class="card">
+    <h2>Speaking — Part 2</h2>
+    <div class="instr">Look at the pictures. There are four in each row. One is different. Can you find the picture which is different?</div>
+    <div class="speak-note">This activity is assessed by your teacher. There is no written score.</div>
+    <p style="font-weight:bold;font-size:13px;color:#6a1b9a;margin:10px 0 4px">Row 1</p>
+    <div class="speak-grid">
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd1a.png" alt="A" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd1b.png" alt="B" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd1c.png" alt="C" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd1d.png" alt="D" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+    </div>
+    <p style="font-weight:bold;font-size:13px;color:#6a1b9a;margin:10px 0 4px">Row 2</p>
+    <div class="speak-grid">
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd2a.png" alt="A" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd2b.png" alt="B" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd2c.png" alt="C" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+      <div class="speak-grid-box" style="padding:0;overflow:hidden;background:none;border:2px solid #9c27b0"><img src="images/tests/odd2d.png" alt="D" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:6px"></div>
+    </div>
+    <div class="instr" style="margin-top:12px">Point to the odd one out in each row and explain your choice to your teacher.</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav-bar">
+  <button class="btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>◀ Previous</button>
+  <span class="step-info" id="step-info">Part 1 of 11 — Listening</span>
+  <button class="btn btn-next" id="btn-next" onclick="navigate(1)">Next ▶</button>
+  <button class="btn btn-submit" id="btn-submit" onclick="submitTest()" style="display:none">Submit Test ✓</button>
+</div>
+
+<!-- AUDIO SCRIPTS — always accessible -->
+<div style="max-width:820px;margin:12px auto;padding:0 16px">
+  <details>
+    <summary>📜 Audio Scripts (for teacher / audio generation)</summary>
+    <pre id="audio-scripts-text"></pre>
+  </details>
+</div>
+
+<!-- SCORE MODAL -->
+<div class="modal-ov" id="scoreModal">
+  <div class="modal">
+    <h2>🎉 Test 1 Results</h2>
+    <div class="score-sec">
+      <h3>Listening</h3>
+      <div class="score-bar"><span>Correct</span><span class="score-v" id="lScore">—</span></div>
+      <div class="score-bar"><span>Total</span><span class="score-v">/ 25</span></div>
+    </div>
+    <div class="score-sec">
+      <h3>Reading and Writing</h3>
+      <div class="score-bar"><span>Correct</span><span class="score-v" id="rwScoreEl">—</span></div>
+      <div class="score-bar"><span>Total</span><span class="score-v">/ 35</span></div>
+    </div>
+    <div class="score-total">
+      <h3>Overall Score</h3>
+      <div class="score-big" id="totScore">— / 60</div>
+    </div>
+    <div class="wrong-list" id="wrongList"></div>
+    <button class="close-btn" onclick="document.getElementById('scoreModal').classList.remove('open')">Close &amp; Review</button>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════
+const COLOURS=['red','blue','green','yellow','orange','purple','pink','brown','black','white'];
+
+const l1People=[
+  {n:1,d:'boy in white t-shirt and orange shorts kicking a football (far left)'},
+  {n:2,d:'girl with long dark hair eating an ice cream cone'},
+  {n:3,d:'woman in a red dress standing by the birthday cake table'},
+  {n:4,d:'old man with a grey beard and a cap sitting in a chair'},
+  {n:5,d:'man with glasses reading a blue book in a chair (right)'},
+  {n:6,d:'boy in a blue shirt crouching and playing with a brown dog'},
+  {n:7,d:'girl in a yellow hat watering flowers with a red watering can'},
+];
+const l1Names=['Alex','Emma','Tom','Lucy','Sam','Kim'];
+const l1Ans={Alex:1,Emma:2,Tom:6,Lucy:7,Sam:5,Kim:3};
+
+const l3Acts=[
+  {l:'A',d:'visiting museums',img:'museum.png'},
+  {l:'B',d:'playing football',img:'soccer.png'},
+  {l:'C',d:'cooking / baking',img:'cooking.png'},
+  {l:'D',d:'going cycling',img:'cycling.png'},
+  {l:'E',d:'swimming',img:'swimming.png'},
+  {l:'F',d:'playing guitar',img:'guitar.png'},
+  {l:'G',d:'playing computer games',img:'playing_video_games.png'},
+  {l:'H',d:'chatting with friends',img:'chatting.png'},
+];
+const l3Kids=['uncle','grandmother','brother','cousin','father','sister'];
+const l3Labels={uncle:'his uncle',grandmother:'his grandmother',brother:'his brother',cousin:'his cousin',father:'his father',sister:'his sister'};
+const l3Ans={uncle:'F',grandmother:'C',brother:'B',cousin:'D',father:'E',sister:'A'};
+const l3Example='sister'; // pre-filled, not scored
+
+const l4Example={q:'What is in the box?',opts:['umbrellas','drums','printers'],ans:'B',imgs:['umbrellas.png','drums_set.png','printers.png']};
+
+const l4Qs=[
+  {n:16,q:'What pet does the girl have at home?',        opts:['kittens','a whale','a puppy'],             ans:'A', imgs:['kittens.png','whale.png','puppy.png']},
+  {n:17,q:'What is wrong with the boy?',                 opts:['a headache','a toothache','a sore leg'],   ans:'B', imgs:['headache.png','toothache.png','leg_hurting.png']},
+  {n:18,q:'What does the woman want to buy?',            opts:['a skirt','trousers','a dress'],            ans:'C', imgs:['skirt.png','trousers.png','dress.png']},
+  {n:19,q:'What date is the boy\'s birthday party?',     opts:['the thirteenth','thirty','the thirtieth'],  ans:'C', imgs:['thirtheenth.png','thirty.png','thirtieth.png']},
+  {n:20,q:'What is the weather like today?',             opts:['cloudy','rainy','sunny'],                  ans:'C', imgs:['cloudy.png','rainy.png','sunny.png']},
+];
+
+const l5Tasks=[
+  {n:21,type:'colour',label:'Colour the treasure box:',               ans:'brown'},
+  {n:22,type:'colour',label:"Colour the 3rd racer's shorts:",         ans:'green'},
+  {n:23,type:'write', label:'Write the name of the animal:',          ans:'bat'},
+  {n:24,type:'colour',label:"Colour the skipping girl's hair:",       ans:'yellow'},
+  {n:25,type:'write', label:'Write what the children are doing:',     ans:'skipping'},
+];
+
+const rw1Defs=[
+  {n:26,t:'You can put small things in this part of your clothes.',                      ans:'pocket'},
+  {n:27,t:'Fish and ducks live in this area of water, which is smaller than a sea.',     ans:'lake'},
+  {n:28,t:'This is a white or grey shape that floats high up in the sky.',               ans:'cloud'},
+  {n:29,t:'Cats, dogs and monkeys all have this long part at the back of their body.',   ans:'tail'},
+  {n:30,t:'When a team wins a point in a game, this number gets higher.',                ans:'score'},
+];
+
+const rw2=[
+  {sp:'Sally',line:"Hi! I'm doing a school project about animals. Can you help me?",isQ:false},
+  {sp:'Dan',  line:'',isQ:true,n:31,opts:["Of course! What do you need?","Yes, please help me.","That's my book."],ans:'A'},
+  {sp:'Dan',  line:'How much is the entrance ticket to the zoo?',isQ:false},
+  {sp:'Sally',line:'',isQ:true,n:32,opts:["The animals are beautiful.","I like going there.","It's three pounds fifty."],ans:'C'},
+  {sp:'Sally',line:'Do you have a pet at home?',isQ:false},
+  {sp:'Dan',  line:'',isQ:true,n:33,opts:["I don't want one.","Yes, I have a cat.","She's swimming."],ans:'B'},
+  {sp:'Sally',line:'Can dolphins swim really fast?',isQ:false},
+  {sp:'Dan',  line:'',isQ:true,n:34,opts:["No, they can't fly.","They live in rivers.","Yes, very fast!"],ans:'C'},
+  {sp:'Dan',  line:'Did you visit the zoo last summer?',isQ:false},
+  {sp:'Sally',line:'',isQ:true,n:35,opts:["Of course, we went with my cousins.","The zoo was very big.","We go there every week."],ans:'A'},
+  {sp:'Dan',  line:'Where can we see wild animals?',isQ:false},
+  {sp:'Sally',line:'',isQ:true,n:36,opts:["At school.","At the zoo or in the wild.","In the kitchen."],ans:'B'},
+];
+
+const rw3Words  =['swimming','elephant','hungry','forest','river','exciting'];
+const rw3Imgs   ={swimming:'swimming_tom.png',elephant:'elephant.png',hungry:'hungry.png',forest:'forest.png',river:'river.png',exciting:'exciting.png'};
+const rw3GapAns =['forest','elephant','river','hungry','swimming']; // Q37-41
+const rw3TitleAns='B'; // Q42
+const rw3Titles =['A Day at the Beach',"Tom's Safari Holiday",'The Elephant\'s Home'];
+
+const rw4Qs=[
+  {n:43,pre:'Every Saturday morning, Emma', post:'to the shopping centre with her mum.',          opts:['went','goes','go'],    ans:'B'},
+  {n:44,pre:'The centre was very big and', post:'more than sixty different shops.',              opts:['have','had','has'],    ans:'B'},
+  {n:45,pre:'Emma wanted to buy a new dress', post:'her birthday party the following week.',     opts:['of','to','for'],      ans:'C'},
+  {n:46,pre:'At the café, they ate some',   post:'sandwiches and a glass of orange juice.',       opts:['deliciously','delicious','deliciousness'], ans:'B'},
+  {n:47,pre:'Emma went home feeling very happy', post:'all the things she had bought.',          opts:['of','at','with'],     ans:'C'},
+];
+
+const rw5Story=`Maya is ten years old. She lives with her family in a big, busy city. Their flat is on the fifth floor of a tall building near the city centre. From her window, Maya can see the park and the river.
+
+Maya loves animals, but it is not easy to have pets in a city flat. Her family has one small pet — a goldfish called Bubbles. He lives in a bowl on the kitchen table. Maya feeds Bubbles every morning before school.
+
+Every Saturday, Maya and her dad take the underground train to the city zoo. It is Maya's favourite place in the whole city. She loves watching the penguins and listening to the monkeys. Last Saturday, a zookeeper let Maya hold a small green parrot on her arm.
+
+At school, Maya's class is doing a project about city wildlife. Maya learned that many wild animals live in cities. Foxes walk through the streets at night. Some cities even have falcons on the rooftops of tall buildings!
+
+When Maya grows up, she wants to work with animals on a farm. But for now, she is very happy in her city with Bubbles and her trips to the zoo.`;
+const rw5Qs=[
+  {n:48,stem:'Maya lives on the',                    end:'floor of her building.',      ans:'fifth|5th'},
+  {n:49,stem:"Maya's pet goldfish is called",         end:'.',                          ans:'bubbles'},
+  {n:50,stem:'Maya and her dad travel to the zoo by', end:'train.',                     ans:'underground'},
+  {n:51,stem:'Last Saturday a zookeeper let Maya hold a small green', end:'on her arm.',ans:'parrot'},
+  {n:52,stem:"Maya's class is doing a project about city", end:'.',                     ans:'wildlife'},
+  {n:53,stem:'Foxes walk through the streets at',    end:'.',                           ans:'night'},
+  {n:54,stem:'When Maya grows up she wants to work on a', end:'.',                      ans:'farm'},
+];
+
+const rw6Scene=`A busy street market on a sunny afternoon. In the centre, a woman is choosing fruit and vegetables at a stall. To the left, a boy is riding his bicycle along a path beside a small lake. On the right, a man is talking on his mobile phone near a bench. Yellow flowers are arranged on a table by the market entrance. Two children are laughing and eating ice cream cones. A sign above reads "Green Market".`;
+const rw6Qs=[
+  {n:55,stem:'The woman is buying',        end:'at the market.',      ans:'fruit|fruits|apples'},
+  {n:56,stem:'A boy is riding his',        end:'.',                   ans:'bicycle'},
+  {n:57,stem:"The boy's helmet is",          end:'.',                   ans:'blue'},
+  {n:58,stem:'The flowers on the table are',end:'.',                  ans:'yellow'},
+  {n:59,stem:'A man is talking on his',    end:'.',                   ans:'phone'},
+  {n:60,stem:'The children are eating',    end:'.',                   ans:'ice cream'},
+];
+
+// ══════════════════════════════════════════
+// BUILD UI
+// ══════════════════════════════════════════
+
+// L1 — Hotspot matching
+const NAME_COLOURS={Alex:'#e91e63',Emma:'#2196f3',Tom:'#ff9800',Lucy:'#4caf50',Sam:'#9c27b0',Kim:'#00bcd4'};
+const l1Matches={}; // name → person number
+let l1Selected=null;
+
+(function(){
+  const top=document.getElementById('l1-name-row-top');
+  const bot=document.getElementById('l1-name-row-bottom');
+  l1Names.forEach((name,i)=>{
+    const btn=document.createElement('button');
+    btn.className='name-card';
+    btn.dataset.name=name;
+    btn.textContent=name;
+    btn.onclick=()=>pickName(name);
+    (i < 3 ? top : bot).appendChild(btn);
+  });
+})();
+
+function pickName(name){
+  if(l1Selected===name){
+    l1Selected=null;
+    document.querySelectorAll('.name-card').forEach(c=>c.classList.remove('active'));
+    document.getElementById('l1-hint').textContent='👆 Click a name below, then click the correct person in the picture.';
+    return;
+  }
+  l1Selected=name;
+  document.querySelectorAll('.name-card').forEach(c=>c.classList.toggle('active',c.dataset.name===name));
+  document.getElementById('l1-hint').textContent=`Now click the person who is "${name}" in the picture.`;
+}
+
+function pickHotspot(personNum){
+  if(!l1Selected) return;
+  const name=l1Selected;
+  const colour=NAME_COLOURS[name];
+
+  // Clear old hotspot for this name
+  const prevPerson=l1Matches[name];
+  if(prevPerson){
+    const prev=document.querySelector(`.hotspot[data-person="${prevPerson}"]`);
+    if(prev){prev.textContent=prevPerson;prev.style.background='rgba(0,0,0,0.45)';prev.classList.remove('matched');}
+  }
+  // Clear name that was already on this hotspot
+  for(const [n,p] of Object.entries(l1Matches)){
+    if(p===personNum&&n!==name){
+      delete l1Matches[n];
+      const card=document.querySelector(`.name-card[data-name="${n}"]`);
+      if(card){card.style.background='';card.style.color='';card.classList.remove('done');}
+    }
+  }
+
+  // Apply match
+  l1Matches[name]=personNum;
+  const hs=document.querySelector(`.hotspot[data-person="${personNum}"]`);
+  if(hs){hs.textContent=name;hs.style.background=colour;hs.style.borderColor=colour;hs.classList.add('matched');}
+  const card=document.querySelector(`.name-card[data-name="${name}"]`);
+  if(card){card.style.background=colour;card.style.borderColor=colour;card.style.color='white';card.classList.add('done');}
+
+  l1Selected=null;
+  document.querySelectorAll('.name-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('l1-hint').textContent='✔ Matched! Click another name to continue.';
+  drawL1Lines();
+}
+
+// Redraw lines on scroll (capture phase catches scroll on the slide container, which doesn't bubble)
+document.addEventListener('scroll',drawL1Lines,{capture:true,passive:true});
+
+function drawL1Lines(){
+  const svg=document.getElementById('l1-lines');
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  if(cur!==0) return;
+  Object.entries(l1Matches).forEach(([name,personNum])=>{
+    const hs=document.querySelector(`.hotspot[data-person="${personNum}"]`);
+    const card=document.querySelector(`.name-card[data-name="${name}"]`);
+    if(!hs||!card) return;
+    const h=hs.getBoundingClientRect(), c=card.getBoundingClientRect();
+    const colour=NAME_COLOURS[name];
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', h.left+h.width/2);
+    line.setAttribute('y1', h.top+h.height/2);
+    line.setAttribute('x2', c.left+c.width/2);
+    line.setAttribute('y2', c.top+c.height/2);
+    line.setAttribute('stroke', colour);
+    line.setAttribute('stroke-width','3');
+    line.setAttribute('stroke-linecap','round');
+    line.setAttribute('opacity','0.85');
+    svg.appendChild(line);
+  });
+}
+
+// L3
+(function(){
+  const ad=document.getElementById('l3-acts');
+  l3Acts.forEach(a=>{
+    const c=document.createElement('div');
+    c.className='act-card';
+    c.innerHTML=`<img src="images/tests/${a.img}" alt="${a.d}" style="width:100%;height:auto;display:block;border-radius:4px;margin-bottom:6px"><div class="act-letter">${a.l}</div><div>${a.d}</div>`;
+    ad.appendChild(c);
+  });
+  const cd=document.getElementById('l3-children');
+  const l3Opts=()=>'<option value="">?</option>'+['A','B','C','D','E','F','G','H'].map(l=>`<option value="${l}">${l}</option>`).join('');
+  const questions=l3Kids.filter(n=>n!==l3Example);
+  questions.forEach((name,i)=>{
+    const r=document.createElement('div');
+    r.className='child-row';
+    r.innerHTML=`<img src="images/tests/${name}.png" alt="${l3Labels[name]}" style="width:100%;height:auto;display:block;border-radius:4px;margin-bottom:4px">
+      <span style="color:#888;font-size:11px">${11+i}.</span>
+      <label>${l3Labels[name]}</label>
+      <select id="l3-${name}">${l3Opts()}</select>`;
+    cd.appendChild(r);
+  });
+  // Example row (last, pre-filled, locked)
+  const ex=document.createElement('div');
+  ex.className='child-row';
+  ex.style.cssText='background:#e8f5e9;border:2px dashed #4caf50;margin-top:10px';
+  ex.innerHTML=`<img src="images/tests/${l3Example}.png" alt="${l3Labels[l3Example]}" style="width:100%;height:auto;display:block;border-radius:4px;margin-bottom:4px">
+    <span style="color:#4caf50;font-size:11px;font-weight:bold">Example</span>
+    <label>${l3Labels[l3Example]}</label>
+    <select id="l3-${l3Example}" disabled>${['A','B','C','D','E','F','G','H'].map(l=>`<option value="${l}" ${l===l3Ans[l3Example]?'selected':''}>${l}</option>`).join('')}</select>`;
+  cd.appendChild(ex);
+})();
+
+// L4
+(function(){
+  const d=document.getElementById('l4-qs');
+  const L=['A','B','C'];
+
+  function buildOpts(q,locked){
+    return q.opts.map((o,i)=>{
+      const img=q.imgs&&q.imgs[i]
+        ?`<img src="images/tests/${q.imgs[i]}" alt="${o}" style="width:100%;height:auto;display:block;border-radius:4px;margin-bottom:4px">`
+        :`<div style="width:100%;aspect-ratio:4/3;background:#e0e0e0;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;margin-bottom:4px">image coming</div>`;
+      const isAns=L[i]===q.ans;
+      const style=locked&&isAns?'border:2px solid #4caf50;background:#e8f5e9;':'';
+      const click=locked?'':`onclick="pickMCQ(this,'l4-${q.n}','${L[i]}')"`;
+      return`<div class="mcq-opt" id="l4-${q.n||'ex'}-${L[i]}" ${click} style="${style}${locked?'cursor:default;':''}">
+        ${img}<div class="opt-letter">${L[i]}</div>
+      </div>`;}).join('');
+  }
+
+  // Example block (locked, correct answer pre-highlighted)
+  const ex=document.createElement('div');
+  ex.className='mcq-q';
+  ex.style.cssText='background:#f1f8e9;border:2px dashed #4caf50;border-radius:8px;padding:10px;margin-bottom:16px';
+  ex.innerHTML=`<p style="color:#2e7d32;font-weight:bold;margin:0 0 8px">Example &nbsp;·&nbsp; ${l4Example.q}</p>
+    <div class="mcq-opts">${buildOpts(l4Example,true)}</div>`;
+  d.appendChild(ex);
+
+  // Questions
+  l4Qs.forEach(q=>{
+    const qd=document.createElement('div');
+    qd.className='mcq-q';
+    qd.dataset.n=q.n;
+    qd.dataset.ans=q.ans;
+    qd.innerHTML=`<p>${q.n}. ${q.q}</p><div class="mcq-opts">${buildOpts(q,false)}</div>`;
+    d.appendChild(qd);
+  });
+})();
+
+// L5
+(function(){
+  const d=document.getElementById('l5-tasks');
+  l5Tasks.forEach(t=>{
+    const r=document.createElement('div');
+    r.className='ctask';
+    r.dataset.n=t.n;
+    r.dataset.ans=t.ans;
+    r.innerHTML=t.type==='colour'
+      ?`<label>${t.n}. ${t.label}</label>
+         <select id="l5-${t.n}"><option value="">— colour —</option>${COLOURS.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>`
+      :`<label>${t.n}. ${t.label}</label><input type="text" id="l5-${t.n}" placeholder="write here…">`;
+    d.appendChild(r);
+  });
+})();
+
+// RW1
+(function(){
+  const d=document.getElementById('rw1-defs');
+  rw1Defs.forEach(def=>{
+    const r=document.createElement('div');
+    r.className='def-row';
+    r.dataset.n=def.n;
+    r.dataset.ans=def.ans;
+    r.innerHTML=`<span class="def-num">${def.n}.</span>
+      <span class="def-text">${def.t}</span>
+      <span class="def-ans"><input type="text" id="rw1-${def.n}" placeholder="…"></span>`;
+    d.appendChild(r);
+  });
+})();
+
+// RW2
+(function(){
+  const d=document.getElementById('rw2-content');
+  const dl=document.createElement('div');
+  dl.className='dialogue';
+  rw2.forEach(item=>{
+    if(!item.isQ){
+      const line=document.createElement('div');
+      line.className='dl-line';
+      line.innerHTML=`<span class="speaker">${item.sp}:</span><span class="speech">${item.line}</span>`;
+      dl.appendChild(line);
+    } else {
+      const qd=document.createElement('div');
+      qd.className='dl-q';
+      qd.dataset.n=item.n;
+      qd.dataset.ans=item.ans;
+      const L=['A','B','C'];
+      const opts=item.opts.map((o,i)=>`
+        <label class="dl-opt">
+          <input type="radio" name="rw2-${item.n}" value="${L[i]}">
+          <strong>${L[i]}</strong>&ensp;${o}
+        </label>`).join('');
+      qd.innerHTML=`<p>${item.n}. ${item.sp} says:</p><div class="dl-opts">${opts}</div>`;
+      dl.appendChild(qd);
+    }
+  });
+  d.appendChild(dl);
+})();
+
+// RW3
+(function(){
+  const d=document.getElementById('rw3-content');
+
+  // Two-column wrapper
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:20px;align-items:flex-start';
+
+  // LEFT column: story + title
+  const left=document.createElement('div');
+  left.style.cssText='flex:1;min-width:0';
+
+  // RIGHT column: word image grid
+  const pw=document.createElement('div');
+  pw.className='pw-grid';
+  pw.style.cssText='flex:0 0 220px';
+  rw3Words.forEach(w=>{
+    const c=document.createElement('div');
+    c.className='pw-card';
+    c.innerHTML=`<img src="images/tests/${rw3Imgs[w]}" alt="${w}" style="width:100%;height:auto;display:block;border-radius:4px;margin-bottom:4px"><div class="pw-word">${w}</div>`;
+    pw.appendChild(c);
+  });
+
+  // Styled container for story + Q42
+  const storyBox=document.createElement('div');
+  storyBox.style.cssText='background:#e3f2fd;border:2px solid #90caf9;border-radius:10px;padding:18px 20px;margin-bottom:12px';
+
+  const st=document.createElement('div');
+  st.className='story-text';
+  st.innerHTML=`Last summer, Tom went on a safari holiday with his family. They drove their jeep through a big
+    <span class="g-num">1</span><input class="g-input" id="rw3g1" data-ans="forest" placeholder="___">.
+    Suddenly, they saw a huge
+    <span class="g-num">2</span><input class="g-input" id="rw3g2" data-ans="elephant" placeholder="___">.
+    The animal was standing near a
+    <span class="g-num">3</span><input class="g-input" id="rw3g3" data-ans="river" placeholder="___">
+    and drinking water. Tom's mum said the animals were very
+    <span class="g-num">4</span><input class="g-input" id="rw3g4" data-ans="hungry" placeholder="___">
+    in the morning. In the afternoon, the family went
+    <span class="g-num">5</span><input class="g-input" id="rw3g5" data-ans="swimming" placeholder="___">
+    in a pool near the camp. Tom said it was the best holiday ever!`;
+  storyBox.appendChild(st);
+
+  const ti=document.createElement('div');
+  ti.className='title-pick';
+  ti.dataset.n=42;
+  ti.style.cssText='margin-top:14px;padding-top:12px;border-top:1px solid #90caf9';
+  const L=['A','B','C'];
+  ti.innerHTML=`<strong>42. Choose the best title for the story:</strong>
+    ${rw3Titles.map((t,i)=>`
+      <label class="dl-opt" style="margin:4px 0">
+        <input type="radio" name="rw3-title" value="${L[i]}">
+        <strong>${L[i]}</strong>&ensp;${t}
+      </label>`).join('')}`;
+  storyBox.appendChild(ti);
+  left.appendChild(storyBox);
+
+  wrap.appendChild(left);
+  wrap.appendChild(pw);
+  d.appendChild(wrap);
+})();
+
+// RW4 — gaps are now inline selects in the story-box; no separate rows needed
+
+// RW5
+(function(){
+  const d=document.getElementById('rw5-content');
+  const paras=rw5Story.split('\n\n').filter(p=>p.trim());
+  const imgSt='width:100%;height:auto;display:block;border-radius:8px;margin:10px 0';
+
+  function addImg(src,alt){
+    const img=document.createElement('img');
+    img.src=`images/tests/${src}`;img.alt=alt;img.style.cssText=imgSt;
+    d.appendChild(img);
+  }
+  function addParas(slice){
+    const sb=document.createElement('div');
+    sb.className='story-box';
+    sb.style.cssText='text-align:justify;margin-bottom:0';
+    sb.innerHTML=slice.map(p=>`<p style="margin:0 0 10px;line-height:1.8">${p}</p>`).join('');
+    d.appendChild(sb);
+  }
+
+  addImg('maya_story1.png','Maya in the city');   // top
+  addParas(paras.slice(0,2));                      // paragraphs 1–2
+  addImg('maya_story2.png','Maya at the zoo');     // 1/3
+  addParas(paras.slice(2,3));                      // paragraph 3
+  addImg('maya_story3.png','City wildlife');       // 2/3
+  addParas(paras.slice(3));                        // paragraphs 4–5
+
+  rw5Qs.forEach(q=>{
+    const r=document.createElement('div');
+    r.className='comp-row';
+    r.dataset.n=q.n;
+    r.dataset.ans=q.ans;
+    r.innerHTML=`<span class="comp-num">${q.n}.</span>
+      <span>${q.stem}</span>
+      <input class="comp-input" type="text" id="rw5-${q.n}" placeholder="…">
+      <span>${q.end}</span>`;
+    d.appendChild(r);
+  });
+})();
+
+// RW6
+(function(){
+  const d=document.getElementById('rw6-content');
+  const img=document.createElement('img');
+  img.src='images/tests/greenmarket.png';
+  img.alt='Green Market scene';
+  img.style='width:100%;height:auto;display:block;border-radius:8px;margin-bottom:16px';
+  d.appendChild(img);
+  rw6Qs.forEach(q=>{
+    const r=document.createElement('div');
+    r.className='comp-row';
+    r.dataset.n=q.n;
+    r.dataset.ans=q.ans;
+    r.innerHTML=`<span class="comp-num">${q.n}.</span>
+      <span>${q.stem}</span>
+      <input class="comp-input" type="text" id="rw6-${q.n}" placeholder="…">
+      <span>${q.end}</span>`;
+    d.appendChild(r);
+  });
+  const fr=document.createElement('div');
+  fr.style='margin-top:16px';
+  fr.innerHTML=`<p style="font-size:14px;font-weight:bold;margin-bottom:6px">Write one thing you can see in the picture (free writing):</p>
+    <input type="text" id="rw6-free" style="width:100%;border:2px solid #3f51b5;border-radius:6px;padding:8px 12px;font-size:14px;outline:none" placeholder="Write here…">`;
+  d.appendChild(fr);
+})();
+
+// Audio scripts
+document.getElementById('audio-scripts-text').textContent=`
+=== LISTENING PART 1 — Draw lines (test1_L1.mp3) ===
+
+[Narrator]
+Look at the picture. It is Ben's birthday party in the garden. There are colourful
+balloons and a banner in the trees. In the middle of the garden there is a table with
+a birthday cake on it. Ben has invited his family and some friends to the party.
+There is also a friendly brown dog running around the garden.
+Listen and look. There is one example.
+
+[Woman]  Can you see a boy called Alex?
+[Man]    Yes. Alex is Ben's best friend from school. He loves sport. He is kicking a
+         football near the left side of the garden. He is wearing a white t-shirt
+         and orange shorts.
+[Narrator] Can you see the line from the name "Alex" to the boy kicking the football?
+           That is the example. Now you listen and draw lines.
+
+--- Question 1 ---
+[Woman]  Now find a girl called Emma.
+[Man]    Emma is Alex's older sister. She came to the party with her brother today.
+         She has long dark hair and she is standing near the tree, eating an ice cream cone.
+[Woman]  Emma. She is eating an ice cream cone near the tree.
+[Man]    That's right.
+
+--- Question 2 ---
+[Woman]  Can you see a boy called Tom?
+[Man]    Yes. Tom is Ben's cousin. He loves animals and he always wants to play with
+         every dog he meets! He is wearing a blue shirt and he is crouching down in
+         the garden, stroking the dog.
+[Woman]  Tom. He is playing with the dog in the middle of the garden.
+[Man]    Yes, that's Tom.
+
+--- Question 3 ---
+[Woman]  What about a girl called Lucy?
+[Man]    Lucy is Tom's little sister, so she is also Ben's cousin. She loves gardening.
+         She is standing on the right side of the garden, wearing a yellow hat,
+         and she is watering the flowers with a red watering can.
+[Woman]  Lucy. She is wearing a yellow hat and watering the flowers.
+[Man]    Correct.
+
+--- Question 4 ---
+[Woman]  Where is a man called Sam?
+[Man]    Sam is Ben's uncle — he is Kim's younger brother. He is sitting in the wooden
+         chair on the far right of the garden. He is wearing glasses and reading a
+         blue book. He looks very relaxed!
+[Woman]  Sam. He is sitting in a chair reading a book.
+[Man]    Yes, that's Sam.
+
+--- Question 5 ---
+[Woman]  And can you find a woman called Kim?
+[Man]    Kim is Ben's mum. She organised the whole party for him! She is standing
+         next to the birthday cake table in the centre of the garden. She is wearing
+         a beautiful red dress with a floral pattern.
+[Woman]  Kim. She is standing by the birthday cake wearing a red dress.
+[Man]    That's right. Well done!
+
+=== LISTENING PART 2 — Write information (test1_L2.mp3) ===
+
+[Narrator]
+Mary is visiting Greenfield Sports Club for the first time with her mum.
+She wants to join the club. Listen to Mary talking to the coach, Mr Jones.
+Write the missing information on the form. You will hear the conversation twice.
+
+[Mr Jones] Hello! Welcome to Greenfield Sports Club. I'm Mr Jones, one of the
+           coaches here. Have you been to our club before?
+[Mary]     No, this is my first time. But my friend Lily comes here every week —
+           she told me it's brilliant!
+[Mr Jones] Oh yes, Lily is one of our star swimmers! We have children from all over
+           the town coming here. Some do football, some do tennis, and lots of them
+           love the gymnastics classes. There's always something going on after
+           school and at weekends. So, can I take your first name?
+[Mary]     Yes, I'm Mary.
+[Mr Jones] Mary, lovely. And your surname?
+[Mary]     It's Brown. B-R-O-W-N.
+[Mr Jones] Brown, perfect. And how old are you, Mary?
+[Mary]     I'm nine years old. I'll be ten in March.
+[Mr Jones] Nine — great. Now, we have quite a few sports to choose from.
+           We have football, basketball, tennis, gymnastics... what do you like best?
+[Mary]     I love swimming! It's definitely my favourite. I already go to the
+           public pool with my dad on Saturdays, but I'd love to do more.
+[Mr Jones] Wonderful! Swimming is very popular here. We have a lovely indoor pool
+           and our swimming coach, Miss Hall, is excellent. All the children adore
+           her classes. We have sessions on Monday, Wednesday, and Thursday.
+           Which day would suit you?
+[Mary]     Hmm... Wednesday is tricky — I have piano lessons after school.
+           Could I do Thursday instead?
+[Mr Jones] Thursday is perfect — the class starts at four o'clock and usually
+           finishes around five. There are about eight children in that group,
+           all around your age. I think you'll get on really well with them.
+           Now, can I take a contact phone number, just in case?
+[Mary]     Of course — it's 07854321. That's my mum's mobile.
+[Mr Jones] 07854321 — got that. So, Mary Brown, we'll see you this Thursday
+           at four for swimming. Welcome to Greenfield Sports Club!
+[Mary]     Thank you so much, Mr Jones. I can't wait!
+
+=== LISTENING PART 3 — Letter match (test1_L3.mp3) ===
+
+Activities (A–H) shown as pictures on the page:
+  A – visiting museums        B – playing football
+  C – cooking / baking        D – going cycling
+  E – swimming                F – playing guitar
+  G – playing computer games  H – chatting with friends
+
+[Narrator]
+What does each person in Sam's family like doing in their free time?
+Listen and write a letter (A to H) next to each family member.
+You will hear the conversation twice. There is one example.
+
+--- Example: his sister (shown pre-matched as A on the page) ---
+[Man]   Sam, what does your sister like doing at weekends?
+[Sam]   She loves history! Every Saturday she goes to a different museum with her
+        friends. She finds it really interesting.
+[Man]   So the answer is A — visiting museums. You can see the letter A is already
+        written next to "his sister". Now you listen and write a letter for each
+        person.
+
+--- Question 11: his uncle ---
+[Man]   What does your uncle like doing?
+[Sam]   My uncle is really into music. Every evening after dinner he picks up his
+        guitar and practises for at least an hour. He wants to play in a band one day.
+[Man]   Does he play computer games too?
+[Sam]   No, he doesn't really like computer games. Music is his thing.
+        → Answer: F (playing guitar)
+
+--- Question 12: his grandmother ---
+[Man]   What about your grandmother? What does she enjoy?
+[Sam]   My grandma spends most of her free time in the kitchen. She loves trying out
+        new recipes — she especially likes baking cakes for the whole family.
+        Her chocolate cake is amazing!
+[Man]   Does she ever chat with friends?
+[Sam]   She does chat with friends sometimes, but cooking is definitely what she
+        loves most.
+        → Answer: C (cooking / baking)
+
+--- Question 13: his brother ---
+[Man]   And your brother? What does he like?
+[Sam]   My brother is very sporty. Every Saturday morning he meets his friends at
+        the park and they play football together for hours. He never misses a game.
+[Man]   Does he ever go cycling?
+[Sam]   He cycles to school, but football is his real passion at the weekend.
+        → Answer: B (playing football)
+
+--- Question 14: his cousin ---
+[Man]   What about your cousin?
+[Sam]   My cousin loves being outdoors. She goes cycling with her dad every weekend —
+        they have a special route through the park and along the river. She says
+        it makes her feel free!
+[Man]   Does she ever visit museums, like your sister?
+[Sam]   She went once with her school, but cycling is definitely her favourite thing.
+        → Answer: D (going cycling)
+
+--- Question 15: his father ---
+[Man]   And what about your father? What does he enjoy doing?
+[Sam]   My dad loves water sports. He goes swimming at the sports centre three times
+        a week — Tuesday, Thursday, and Sunday. His goal is to swim in a competition
+        next year.
+[Man]   What about chatting with friends? Does he do that?
+[Sam]   Of course — but swimming is what he really dedicates his time to.
+        → Answer: E (swimming)
+
+=== LISTENING PART 4 — Tick A, B or C (test1_L4.mp3) ===
+
+[Narrator]
+Listen and look. There is one example.
+What is in the box?
+
+--- Example ---
+[Woman] What's in that big box over there?
+[Man]   It's a drum set! My daughter loves music — she's been asking for one all year.
+[Woman] Oh wow! What about those other boxes?
+[Man]   Those are umbrellas for the school shop, and that one is a printer for the
+        office. But the drums are for my daughter!
+        → Example Answer: B (drums)
+        [Look at the letter B next to the drums. Now listen and tick the box.]
+
+--- Q16: What pet does the girl have at home? ---
+[Woman] Do you have any pets at home?
+[Girl]  Yes! Our cat had babies last month. We have three little kittens now —
+        they're so cute! They sleep in a basket in the kitchen.
+[Woman] Oh, how lovely! Are you going to keep them all?
+[Girl]  No, Mum says we can only keep one. I want the black one with white paws.
+[Woman] That sounds adorable! What about a puppy — would you like one of those?
+[Girl]  Maybe one day, but right now the kittens are enough!
+        → Answer: A (kittens)
+
+--- Q17: What is wrong with the boy? ---
+[Woman] Are you okay? You don't look very well today.
+[Boy]   My tooth really hurts. It woke me up last night.
+[Woman] Oh dear! Have you got a headache too?
+[Boy]   No, just my tooth. Mum says I need to go to the dentist this afternoon.
+[Woman] You poor thing! Have you hurt your leg as well?
+[Boy]   No, just my tooth. It's really bad — I can't even eat my lunch.
+        → Answer: B (a toothache)
+
+--- Q18: What does the woman want to buy? ---
+[Man]   Good morning! Can I help you?
+[Woman] Yes please. I'm looking for something to wear to a birthday party
+        this weekend. Something nice and colourful.
+[Man]   Of course! We have some lovely skirts — very fashionable this season.
+[Woman] Hmm, I do like skirts, but not today. What about trousers?
+[Man]   We have some nice ones, but may I suggest a dress? We just got some
+        beautiful new ones in. Very elegant for a party.
+[Woman] Oh yes — a dress would be perfect! Can I try one on?
+[Man]   Of course, right this way!
+        → Answer: C (a dress)
+
+--- Q19: What date is the boy's birthday party? ---
+[Girl]  I can't wait for your party! When is it again?
+[Boy]   It's on the thirtieth — that's this Saturday!
+[Girl]  The thirtieth? I nearly wrote the thirteenth in my diary!
+[Boy]   No, no — the thirtieth! Not the thirteenth and not just thirty —
+        the thirtieth. Saturday the thirtieth. Don't forget!
+[Girl]  The thirtieth — got it! I'll be there!
+        → Answer: C (the thirtieth)
+
+--- Q20: What is the weather like today? ---
+[Boy]   Are you going outside to play after school?
+[Girl]  Yes! Have you seen how sunny it is? The sky is completely blue!
+[Boy]   Really? This morning it looked really cloudy. I even brought my umbrella.
+[Girl]  I know — but it changed! It was rainy at breakfast too, but now look —
+        not a cloud anywhere. It's beautiful!
+[Boy]   Great! Let's all go to the park then. I'll leave my umbrella here.
+        → Answer: C (sunny)
+
+=== LISTENING PART 5 — Colour and write (test1_L5.mp3) ===
+
+[Narrator]
+Listen and look at the picture. There is one example.
+
+--- Example ---
+[Woman] This is a lovely picture! Can you see the pond on the left?
+[Boy]   Yes, with the ducks on it!
+[Woman] That's right. Colour the pond light blue, please.
+[Boy]   Light blue — like the sky?
+[Woman] Exactly! Colour it light blue.
+        [The pond is already coloured light blue in the example.]
+
+Now listen and colour and write.
+
+--- Q21: Colour the treasure box ---
+[Woman] Now, can you see the treasure box in the picture?
+[Boy]   Yes! It's got gold coins coming out of it!
+[Woman] That's right. Colour the treasure box brown, please.
+[Boy]   Brown? Like wood?
+[Woman] Exactly — like a wooden chest. Colour it brown.
+[Boy]   Brown treasure box — done!
+        → Colour the treasure box: BROWN
+
+--- Q22: Colour the 3rd racer's shorts ---
+[Woman] Now look at the children running the race in the background.
+[Boy]   I can see them! There are lots of runners.
+[Woman] Good. Can you find the third runner — the one in the middle?
+[Boy]   Yes, I've got them!
+[Woman] Colour that racer's shorts green, please.
+[Boy]   Green shorts — not blue or red?
+[Woman] No — green. The third racer's shorts.
+[Boy]   Green — done!
+        → Colour the 3rd racer's shorts: GREEN
+
+--- Q23: Write the name of the animal ---
+[Woman] Now look carefully at the big tree. Can you see the animal hanging
+        upside down from one of the branches?
+[Boy]   Oh yes! It looks a bit scary. What is it?
+[Woman] It's a bat! Can you write "bat" on your paper?
+[Boy]   A bat? Like the ones that come out at night?
+[Woman] That's right. B-A-T — bat. Write it next to the animal in the tree.
+[Boy]   B-A-T — bat! Done.
+        → Write the name of the animal: BAT
+
+--- Q24: Colour the skipping girl's hair ---
+[Woman] Now look at the girl who is skipping with the rope.
+[Boy]   I can see her! She's jumping really high.
+[Woman] Good. Colour her hair yellow, please.
+[Boy]   Yellow? Like blonde hair?
+[Woman] Yes, exactly — bright yellow hair. Colour the skipping girl's hair yellow.
+[Boy]   Yellow hair — done! She looks great!
+        → Colour the skipping girl's hair: YELLOW
+
+--- Q25: Write what the children are doing ---
+[Woman] Now look at the children in the background. Some are running a race,
+        but what are the others doing? Can you see?
+[Boy]   Yes! They've got a rope — they're jumping over it!
+[Woman] That's right! What do we call that? Write it on your paper.
+[Boy]   Is it… skipping?
+[Woman] Exactly — skipping! S-K-I-P-P-I-N-G. Write "skipping" on your paper.
+[Boy]   S-K-I-P-P-I-N-G — skipping! I love skipping!
+        → Write what the children are doing: SKIPPING
+`;
+
+// ══════════════════════════════════════════
+// LOCKED AUDIO PLAYERS (play-only, no pause/seek)
+// ══════════════════════════════════════════
+function cpPlay(btn){
+  const audio = btn.closest('.custom-player').querySelector('.locked-audio');
+  if(audio._playCount >= 2) return;
+  audio.currentTime = 0;
+  audio._safe = 0;
+  audio.play();
+}
+
+document.querySelectorAll('.locked-audio').forEach(audio=>{
+  const player = audio.closest('.custom-player');
+  const btn  = player.querySelector('.cp-btn');
+  const fill = player.querySelector('.cp-fill');
+  const time = player.querySelector('.cp-time');
+  audio._playCount = 0;
+
+  // Block seeking
+  audio.addEventListener('seeking', ()=>{
+    if(!audio.ended) audio.currentTime = audio._safe || 0;
+  });
+
+  // Track safe position and update progress
+  audio.addEventListener('timeupdate', ()=>{
+    audio._safe = audio.currentTime;
+    if(audio.duration){
+      fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+      const m = Math.floor(audio.currentTime / 60);
+      const s = Math.floor(audio.currentTime % 60);
+      time.textContent = `${m}:${String(s).padStart(2,'0')}`;
+    }
+  });
+
+  // Prevent pausing (unless ended)
+  audio.addEventListener('pause', ()=>{
+    if(!audio.ended) audio.play();
+  });
+
+  audio.addEventListener('play', ()=>{
+    audio._playCount++;
+    btn.textContent = audio._playCount === 1 ? '▶ Playing…' : '↩ Replaying…';
+    btn.disabled = true;
+  });
+
+  audio.addEventListener('ended', ()=>{
+    fill.style.width = '100%';
+    if(audio._playCount < 2){
+      btn.textContent = '↩ Replay (1×)';
+      btn.disabled = false;
+    } else {
+      btn.textContent = '✓ Done';
+      btn.disabled = true;
+    }
+  });
+});
+
+// ══════════════════════════════════════════
+// ACTIVITY TIMER (per R&W slide, 5 min)
+// ══════════════════════════════════════════
+let actSecs = 0;
+let actInterval = null;
+
+function startActTimer(){
+  clearInterval(actInterval);
+  actSecs = 5 * 60;
+  const badge = document.getElementById('act-timer');
+  badge.style.display = 'block';
+  renderActTimer();
+  actInterval = setInterval(()=>{
+    actSecs--;
+    renderActTimer();
+    if(actSecs <= 0) clearInterval(actInterval);
+  }, 1000);
+}
+
+function stopActTimer(){
+  clearInterval(actInterval);
+  document.getElementById('act-timer').style.display = 'none';
+}
+
+function renderActTimer(){
+  const badge = document.getElementById('act-timer');
+  const m = Math.floor(actSecs / 60);
+  const s = actSecs % 60;
+  badge.innerHTML = `<span class="act-label">Activity</span>${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  badge.classList.remove('yellow','red');
+  if(actSecs <= 60)       badge.classList.add('red');
+  else if(actSecs <= 180) badge.classList.add('yellow');
+}
+
+// ══════════════════════════════════════════
+// TIMER
+// ══════════════════════════════════════════
+const READING_START_SLIDE = 5;
+let timerSecs = 0;
+let timerInterval = null;
+let timerPhase = 'listening'; // 'listening' | 'reading' | 'done'
+
+function startTimer(seconds){
+  clearInterval(timerInterval);
+  timerSecs = seconds;
+  renderTimer();
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer(){
+  timerSecs--;
+  renderTimer();
+  if(timerSecs <= 0){
+    clearInterval(timerInterval);
+    if(timerPhase === 'listening'){
+      timerPhase = 'reading';
+      // Jump to first R&W slide
+      slides[cur].classList.remove('active');
+      cur = READING_START_SLIDE;
+      slides[cur].classList.add('active');
+      updateNav();
+      drawL1Lines();
+      window.scrollTo({top:0,behavior:'smooth'});
+      showTimerModal(
+        '⏰ Listening time is up!',
+        'Moving to Reading &amp; Writing now. You have 30 minutes.'
+      );
+      startTimer(30 * 60);
+    } else if(timerPhase === 'reading'){
+      timerPhase = 'done';
+      showTimerModal(
+        '⏰ Time is up!',
+        'The Reading &amp; Writing time has ended. Please submit your answers.'
+      );
+    }
+  }
+}
+
+function renderTimer(){
+  const badge = document.getElementById('timer-badge');
+  const m = Math.floor(timerSecs / 60);
+  const s = timerSecs % 60;
+  badge.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  badge.classList.toggle('warn',   timerSecs <= 300 && timerSecs > 60);
+  badge.classList.toggle('danger', timerSecs <= 60);
+}
+
+function showTimerModal(title, msg){
+  document.getElementById('timer-modal-title').innerHTML = title;
+  document.getElementById('timer-modal-msg').innerHTML  = msg;
+  document.getElementById('timer-modal').classList.add('show');
+}
+
+function dismissTimerModal(){
+  document.getElementById('timer-modal').classList.remove('show');
+}
+
+function startTest(){
+  const name = document.getElementById('student-name').value.trim();
+  if(!name){ document.getElementById('student-name').focus(); return; }
+  document.getElementById('intro-overlay').style.display = 'none';
+  startTimer(25 * 60);
+}
+
+// ══════════════════════════════════════════
+// SLIDE NAVIGATION
+// ══════════════════════════════════════════
+const slides=document.querySelectorAll('.slide');
+const TOTAL=slides.length;
+let cur=0;
+
+const partNames=[
+  'Listening — Part 1','Listening — Part 2','Listening — Part 3',
+  'Listening — Part 4','Listening — Part 5',
+  'Reading & Writing — Part 1','Reading & Writing — Part 2','Reading & Writing — Part 3',
+  'Reading & Writing — Part 4','Reading & Writing — Part 5','Reading & Writing — Part 6',
+  'Speaking — Part 1','Speaking — Part 2',
+];
+
+function navigate(dir){
+  const prev=cur;
+  slides[cur].classList.remove('active');
+  cur=Math.max(0,Math.min(TOTAL-1,cur+dir));
+  slides[cur].classList.add('active');
+  updateNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+  drawL1Lines();
+  // Switch section timer phase when manually entering reading section
+  if(prev < READING_START_SLIDE && cur >= READING_START_SLIDE && timerPhase==='listening'){
+    timerPhase='reading';
+    startTimer(30 * 60);
+  }
+  // Activity timer: start fresh for each R&W slide, hide on listening slides
+  if(cur >= READING_START_SLIDE){
+    startActTimer();
+  } else {
+    stopActTimer();
+  }
+}
+
+function updateNav(){
+  document.getElementById('btn-prev').disabled=cur===0;
+  const isLast=cur===TOTAL-1;
+  document.getElementById('btn-next').style.display=isLast?'none':'inline-block';
+  document.getElementById('btn-submit').style.display=isLast?'inline-block':'none';
+  document.getElementById('part-badge').textContent=`Part ${cur+1} / ${TOTAL}`;
+  document.getElementById('step-info').textContent=partNames[cur];
+  document.getElementById('progress-bar').style.width=`${Math.round((cur+1)/TOTAL*100)}%`;
+
+  const section=slides[cur].dataset.section;
+  const lbl=document.getElementById('section-label');
+  if(section==='listening'){
+    lbl.className='section-label listening';
+    lbl.textContent='LISTENING';
+  } else if(section==='speaking'){
+    lbl.className='section-label speaking';
+    lbl.textContent='SPEAKING';
+  } else {
+    lbl.className='section-label reading';
+    lbl.textContent='READING AND WRITING';
+  }
+}
+
+// ══════════════════════════════════════════
+// INTERACTION
+// ══════════════════════════════════════════
+function pickMCQ(el,groupId,letter){
+  document.querySelectorAll(`[id^="${groupId}-"]`).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  el.closest('.mcq-q').dataset.selected=letter;
+}
+function pickGram(el){
+  el.closest('.gram-row').querySelectorAll('.gram-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+// ══════════════════════════════════════════
+// SCORING
+// ══════════════════════════════════════════
+function submitTest(){
+  let lSc=0, rwSc=0;
+  const rev=[]; // {label, userAns, correctAns, ok}
+
+  // ── helpers ──
+  function push(label,userAns,correctAns,ok){ rev.push({label,userAns,correctAns,ok}); }
+
+  function scoreInput(id,correctAns,label){
+    const el=document.getElementById(id);
+    if(!el){push(label,'(no field)',correctAns.split('|')[0],false);return 0;}
+    const val=el.value.toLowerCase().trim();
+    const ok=correctAns.toLowerCase().split('|').some(a=>a.trim()===val);
+    el.style.borderBottomColor=ok?'green':'red';
+    el.style.background=ok?'#e8f5e9':'#ffebee';
+    push(label, val||'(blank)', correctAns.split('|')[0], ok);
+    return ok?1:0;
+  }
+
+  // L1
+  l1Names.forEach(name=>{
+    const ok=l1Matches[name]===l1Ans[name];
+    const card=document.querySelector(`.name-card[data-name="${name}"]`);
+    const hs=document.querySelector(`.hotspot[data-person="${l1Ans[name]}"]`);
+    if(card) card.style.outline=ok?'3px solid green':'3px solid red';
+    if(!ok&&hs) hs.style.outline='3px solid green';
+    if(ok) lSc++;
+    push(`L1 — ${name}`,
+      l1Matches[name]?`Person ${l1Matches[name]}`:'(none)',
+      `Person ${l1Ans[name]}`, ok);
+  });
+
+  // L2
+  [['l2q6','swimming','Q6 (L2)'],['l2q7','gymnastics','Q7 (L2)'],['l2q8','brown','Q8 (L2)'],
+   ['l2q9','thursday','Q9 (L2)'],['l2q10','four|4','Q10 (L2)']].forEach(([id,ans,lbl])=>{
+    lSc+=scoreInput(id,ans,lbl);
+  });
+
+  // L3
+  l3Kids.filter(n=>n!==l3Example).forEach(name=>{
+    const inp=document.getElementById(`l3-${name}`);
+    const val=inp?inp.value:'';
+    const ok=val===l3Ans[name];
+    if(inp){inp.style.borderColor=ok?'green':'red';inp.style.background=ok?'#e8f5e9':'#ffebee';}
+    if(ok) lSc++;
+    push(`L3 — ${l3Labels[name]}`, val||'(blank)', l3Ans[name], ok);
+  });
+
+  // L4
+  l4Qs.forEach(q=>{
+    const qd=document.querySelector(`.mcq-q[data-n="${q.n}"]`);
+    const sel=qd?qd.dataset.selected:null;
+    const ok=sel===q.ans;
+    if(ok) lSc++;
+    push(`Q${q.n} (L4)`,
+      sel?`${sel} — ${q.opts['ABC'.indexOf(sel)]}`:'(none)',
+      `${q.ans} — ${q.opts['ABC'.indexOf(q.ans)]}`, ok);
+    document.querySelectorAll(`[id^="l4-${q.n}-"]`).forEach(o=>{
+      const l=o.id.split('-').pop();
+      if(l===q.ans) o.style.border='2px solid green';
+      else if(l===sel&&!ok) o.style.border='2px solid red';
+    });
+  });
+
+  // L5
+  l5Tasks.forEach(t=>{
+    const el=document.getElementById(`l5-${t.n}`);
+    if(!el) return;
+    const val=el.tagName==='SELECT'?el.value.toLowerCase():el.value.toLowerCase().trim();
+    const ok=val===t.ans.toLowerCase();
+    if(el.tagName==='SELECT') el.style.borderColor=ok?'green':'red';
+    else{el.style.borderBottomColor=ok?'green':'red';el.style.background=ok?'#e8f5e9':'#ffebee';}
+    if(ok) lSc++;
+    push(`Q${t.n} (L5)`, val||'(blank)', t.ans, ok);
+  });
+
+  // RW1
+  rw1Defs.forEach(def=>{ rwSc+=scoreInput(`rw1-${def.n}`,def.ans,`Q${def.n} (RW1)`); });
+
+  // RW2
+  rw2.filter(i=>i.isQ).forEach(item=>{
+    const radios=document.querySelectorAll(`input[name="rw2-${item.n}"]`);
+    let sel=null;
+    radios.forEach(r=>{if(r.checked) sel=r.value;});
+    const ok=sel===item.ans;
+    if(ok) rwSc++;
+    push(`Q${item.n} (RW2)`,
+      sel?`${sel} — ${item.opts['ABC'.indexOf(sel)]}`:'(none)',
+      `${item.ans} — ${item.opts['ABC'.indexOf(item.ans)]}`, ok);
+    radios.forEach(r=>{
+      const lbl=r.closest('.dl-opt');
+      if(r.value===item.ans) lbl.style.background='#e8f5e9';
+      else if(r.checked&&!ok) lbl.style.background='#ffebee';
+    });
+  });
+
+  // RW3 gaps
+  rw3GapAns.forEach((ans,i)=>{
+    const el=document.getElementById(`rw3g${i+1}`);
+    if(!el) return;
+    const val=el.value.toLowerCase().trim();
+    const ok=val===ans;
+    el.style.borderBottomColor=ok?'green':'red';
+    el.style.background=ok?'#e8f5e9':'#ffebee';
+    if(ok) rwSc++;
+    push(`Q${37+i} (RW3 gap ${i+1})`, val||'(blank)', ans, ok);
+  });
+
+  // RW3 title
+  const tSel=document.querySelector('input[name="rw3-title"]:checked');
+  const tOk=!!(tSel&&tSel.value===rw3TitleAns);
+  if(tOk) rwSc++;
+  push('Q42 (RW3 title)',
+    tSel?`${tSel.value} — ${rw3Titles['ABC'.indexOf(tSel.value)]}`:'(none)',
+    `${rw3TitleAns} — ${rw3Titles['ABC'.indexOf(rw3TitleAns)]}`, tOk);
+
+  // RW4
+  rw4Qs.forEach(q=>{
+    const sel=document.getElementById(`rw4-${q.n}`);
+    if(!sel) return;
+    const val=sel.value;
+    const ok=val===q.ans;
+    if(ok) rwSc++;
+    push(`Q${q.n} (RW4)`,
+      val?`${val} — ${q.opts['ABC'.indexOf(val)]}`:'(none)',
+      `${q.ans} — ${q.opts['ABC'.indexOf(q.ans)]}`, ok);
+    sel.style.borderBottomColor=ok?'green':'red';
+    sel.style.color=ok?'green':'red';
+  });
+
+  // RW5
+  rw5Qs.forEach(q=>{ rwSc+=scoreInput(`rw5-${q.n}`,q.ans,`Q${q.n} (RW5)`); });
+
+  // RW6
+  rw6Qs.forEach(q=>{ rwSc+=scoreInput(`rw6-${q.n}`,q.ans,`Q${q.n} (RW6)`); });
+
+  // ── Scores ──
+  document.getElementById('lScore').textContent=lSc;
+  document.getElementById('rwScoreEl').textContent=rwSc;
+  document.getElementById('totScore').textContent=`${lSc+rwSc} / 60`;
+
+  // ── Review display ──
+  const correct=rev.filter(i=>i.ok).length;
+  const wl=document.getElementById('wrongList');
+  wl.innerHTML=`
+    <h4>Question Review — ${correct} / ${rev.length} correct</h4>
+    <div class="rev-list">
+      ${rev.map(item=>`
+        <div class="rev-item ${item.ok?'rev-ok':'rev-wrong'}">
+          <span class="rev-label">${item.ok?'✓':'✗'} ${item.label}</span>
+          <span class="rev-user">Your answer: <strong>${item.userAns}</strong></span>
+          ${item.ok
+            ? '<span class="rev-correct"></span>'
+            : `<span class="rev-correct">→ Correct: <strong>${item.correctAns}</strong></span>`}
+        </div>`).join('')}
+    </div>`;
+
+  document.getElementById('scoreModal').classList.add('open');
+}
+
+// ── L5 COLOUR HOTSPOTS ──────────────────────────────
+const L5_PALETTE=[
+  {name:'red',    hex:'#e53935'},{name:'orange', hex:'#fb8c00'},
+  {name:'yellow', hex:'#fdd835'},{name:'green',  hex:'#43a047'},
+  {name:'blue',   hex:'#1e88e5'},{name:'light blue',hex:'#29b6f6'},
+  {name:'purple', hex:'#8e24aa'},{name:'pink',   hex:'#e91e63'},
+  {name:'brown',  hex:'#6d4c41'},{name:'black',  hex:'#212121'},
+  {name:'white',  hex:'#f5f5f5'},{name:'grey',   hex:'#9e9e9e'},
+];
+
+// Build palette element once
+(function(){
+  const pal=document.createElement('div');
+  pal.id='l5-palette';
+  L5_PALETTE.forEach(c=>{
+    const s=document.createElement('button');
+    s.className='pal-swatch';
+    s.title=c.name;
+    s.style.background=c.hex;
+    s.onclick=()=>pickColour(c.name,c.hex);
+    pal.appendChild(s);
+  });
+  document.body.appendChild(pal);
+})();
+
+let _activeSpot=null;
+
+function openColourPicker(btn){
+  _activeSpot=btn;
+  const pal=document.getElementById('l5-palette');
+  const r=btn.getBoundingClientRect();
+  pal.style.display='grid';
+  pal.style.top=(r.bottom+8)+'px';
+  pal.style.left=Math.max(8,r.left-60)+'px';
+}
+
+function pickColour(name,hex){
+  if(!_activeSpot) return;
+  _activeSpot.style.background=hex;
+  _activeSpot.style.color=['white','yellow','light blue'].includes(name)?'#333':'white';
+  _activeSpot.dataset.selected=name;
+  _activeSpot.classList.add('picked');
+  document.getElementById('l5-palette').style.display='none';
+  _activeSpot=null;
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#l5-palette')&&!e.target.classList.contains('colour-spot')){
+    document.getElementById('l5-palette').style.display='none';
+  }
+});
+</script>
+<!-- Fixed SVG overlay for L1 match lines -->
+<svg id="l1-lines" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:500"></svg>
+</body>
+</html>
