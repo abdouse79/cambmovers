@@ -1344,10 +1344,11 @@ document.querySelectorAll('.locked-audio').forEach(audio=>{
   const fill = player.querySelector('.cp-fill');
   const time = player.querySelector('.cp-time');
   audio._playCount = 0;
+  audio._playing = false;
 
-  // Block seeking
+  // Block seeking (only while actively playing)
   audio.addEventListener('seeking', ()=>{
-    if(!audio.ended) audio.currentTime = audio._safe || 0;
+    if(audio._playing && !audio.ended) audio.currentTime = audio._safe || 0;
   });
 
   // Track safe position and update progress
@@ -1361,18 +1362,21 @@ document.querySelectorAll('.locked-audio').forEach(audio=>{
     }
   });
 
-  // Prevent pausing (unless ended)
+  // Prevent pausing — only resume if user explicitly started playback
+  // (guards against spurious pause events fired before/after play)
   audio.addEventListener('pause', ()=>{
-    if(!audio.ended) audio.play();
+    if(audio._playing && !audio.ended) audio.play().catch(()=>{});
   });
 
   audio.addEventListener('play', ()=>{
     audio._playCount++;
+    audio._playing = true;
     btn.textContent = audio._playCount === 1 ? '▶ Playing…' : '↩ Replaying…';
     btn.disabled = true;
   });
 
   audio.addEventListener('ended', ()=>{
+    audio._playing = false;
     fill.style.width = '100%';
     if(audio._playCount < 2){
       btn.textContent = '↩ Replay (1×)';
